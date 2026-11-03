@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.0.0 — 2026-11-03
+
+影响面：memo-canvas(SKILL.md, references/tables.md, references/redraw.md, references/flowcharts.md, scripts/image_pipeline.py, scripts/test_image_pipeline.py, agents/openai.yaml, version.json, README.md) / memo-table(本地兼容入口)
+
+- Memo-Table 更名为「墨兰迪 Memo-Canvas」，保留六种表格输出、选型约定与锁定包，表格流程移至按需参考。
+- 合并扫描图像重绘 DEMO：原样保留、传统高清化、按图形类型忠实重绘，保留用户指定开局三选项。
+- 增加公式、化学结构、数学图和流程图分工；专业绘图后再调参数，内容与视觉分别核验。
+- 保留本地旧调用兼容；模型权重和识图服务未捆绑，不将可选路线说成已完成端到端集成。
+- GitHub 仓库沿用原历史并更名为 memo-canvas；更新安装与迁移说明。其他技能的系列清单不在本次发布范围。
+
 ## v1.3.2 — 2026-10-30
 
 影响面：memo-table(README.md, references/satellites.md)

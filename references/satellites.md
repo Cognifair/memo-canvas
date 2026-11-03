@@ -11,7 +11,7 @@
 ```json
 {
   "schema": 1,
-  "skill_id": "memo-table",
+  "skill_id": "memo-canvas",
   "auto_check": false,
   "throttle_hours": 24,
   "allowed_version_hosts": [

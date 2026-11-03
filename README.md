@@ -1,8 +1,20 @@
-# 墨记表格制作 Memo-Table
+# 墨兰迪 Memo-Canvas v2.0.0
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
-将文字或已有表格转换为透明 PNG、锁定样式的产品表格/对比图/销售列表，或可直接复制的 LaTeX array 代码。调用名为 `$memo-table`，版本以 [SKILL.md](SKILL.md) 的 `metadata.version` 为准。
+原 Memo-Table，现统一为表格制作与学习图像视觉处理技能。保留六款表格输出，新增扫描图片公式、数学图、化学结构和流程图的三档处理。调用名为 `$memo-canvas`，旧 `$memo-table` 通过本地兼容入口转入。版本以 [SKILL.md](SKILL.md) 为准。
+
+## 图片三档处理
+
+遇到待处理图片先问：“您的任务中包括图片公式、化学结构，需要怎么处理？”
+
+1. 直接原样上传
+2. 用墨兰迪简单高清化（更快，不使用大模型重绘）
+3. 用墨兰迪精美重绘
+
+选项保留用户指定文案，但本技能本身只交付本地文件，不实际上传。纯文本制表不问图片选项。精美重绘按内容分工：一般图与流程图用 SVG，数学图可用 SVG/TikZ，化学结构可识别后交由 RDKit 绘图；再调字号、线宽、间距并分别核验语义与视觉。流程图先核对节点、箭头、条件和回路，不为好看改连接。
+
+`scripts/image_pipeline.py` 提供原样复制、Pillow 传统增强、已知 SMILES/Molfile 的 RDKit 绘图。没有捆绑 MolScribe、DECIMER、DeTikZify 权重或端到端识图适配器；不绑定 OpenAI，当前模型不能看图时须使用外部识别工具或用户提供的结构。低清图片无法辨认的内容不会自动猜补。详见 [重绘流程](references/redraw.md) 和 [流程图流程](references/flowcharts.md)。
 
 ## 六种样式
 
@@ -21,19 +33,25 @@
 
 ## 安装与使用
 
-适合把已有文字或表格制作成图片/表格代码；不负责知识拆解、Markji 账户操作或 TXT 文件容器。图片渲染需已安装的 Node.js、Playwright、Chrome/Edge 和相应字体；本技能不自动安装依赖。
+适合把文字或表格制作成图片/代码，以及改善扫描学习图的呈现；不负责知识拆解、Markji 账户操作或 TXT 文件容器。表格图片渲染需 Node.js、Playwright、Chrome/Edge 和字体；传统高清化需 Pillow，分子绘图需 RDKit，识图另需实际可用的模型。不会自动安装大型模型或上传图片。
 
-将本仓库克隆到所用客户端的技能目录，目录名为 `memo-table`。例如在该技能目录的父目录中执行：
+仓库由 `Cognifair/memo-table` 更名为 `Cognifair/memo-canvas`，保留原提交历史与旧版本标签。将仓库克隆到客户端技能目录，文件夹名为 `memo-canvas`：
 
 ```text
-git clone https://github.com/Cognifair/memo-table.git memo-table
+git clone https://github.com/Cognifair/memo-canvas.git memo-canvas
+```
+
+已有旧版安装时先备份本地改动，再将技能文件夹由 `memo-table` 更名为 `memo-canvas`，并将 origin 更新为新地址；不要仅在旧目录里拉取后假设目录名已自动改变。旧名称可用于自然语言识别；`$memo-table` 的本地转接入口需单独保留，并非本仓库自动安装。以下是新入口的调用示例：
+
+```text
+使用 $memo-canvas 处理这张扫描图，先让我选择图片处理方式。
 ```
 
 Codex / WorkBuddy 安装或更新后新开会话或重启客户端。使用时可直接说：
 
-> 使用 $memo-table，把这份概念对照表做成圆角图片；先判断材料结构是否需要布局适配。
+> 使用 $memo-canvas，把这份概念对照表做成圆角图片；先判断材料结构是否需要布局适配。
 
-主要目录：`SKILL.md` 为执行规则，`references/` 为选型与 LaTeX 说明，`scripts/` 为渲染与测试入口；`scripts/locked/` 为不可随意改动的固定样式包。
+主要目录：`SKILL.md` 为入口；`references/tables.md` 保留原表格流程，其他 references 按需说明图像重绘、流程图与 LaTeX；`scripts/` 为绘图及测试入口；`scripts/locked/` 保持原样，不随品牌改名修改。
 
 > 直角墨墨风（`square`）已在 v1.2.0 取消。
 >
@@ -89,6 +107,8 @@ node scripts/locked/selftest.cjs <新目录>
 生成表格不等于已上传或插入卡片；图片的 HTML 是本地编辑源，不直接写进 Markji 正文。
 
 ## Memo 系列
+
+以下列出相关系列技能；仓库更名不代表其他技能的清单与本地目录会自动完成迁移。
 
 <!-- memo-series:begin -->
 | 技能 | 职责 |
