@@ -2,10 +2,10 @@
 name: memo-canvas
 description: 墨兰迪 Memo-Canvas（原 Memo-Table），制作表格图片与 LaTeX array 表格，并处理扫描图片公式、数学图、化学结构、流程图的原样保留、传统高清化和忠实重绘。用户提到墨兰迪、Memo-Canvas、Memo-Table、表格转图片或扫描图重绘时使用；不负责 Markji 账户、牌组、上传与 TXT 容器。
 metadata:
-  version: "2.0.0"
+  version: "2.0.1"
 ---
 
-# 墨兰迪 Memo-Canvas v2.0.0
+# 墨兰迪 Memo-Canvas v2.0.1
 
 调用名 `$memo-canvas`；旧称「墨记表格制作 Memo-Table」「Maimemo Table」用于意图兼容，`$memo-table` 本地兼容入口转入本技能。不将品牌名称理解成必须使用莫兰迪色系。保留原有六种表格输出及锁定包，新增图像处理入口；不是化学识别模型或通用 OCR 的捆绑包。
 
@@ -46,4 +46,4 @@ metadata:
 
 图片路线交付结果、可编辑源（重绘时）、原图对照与剩余疑点；检查目标尺寸下的字号、裁切、重叠和对比。LaTeX 表格路线只输出规定代码，不混入图片报告。不得把本地预览说成已在 Markji 客户端验收。
 
-选项选择不授权远程上传、公开发布、卡片写入或牌组操作。制卡属于 `memo-cardest`，TXT 容器属于 `memo-txtimporter`；本技能仅交付本地 PNG/SVG/HTML 等绘图源或规定 LaTeX 代码。
+选项选择不授权远程上传、公开发布、卡片写入或牌组操作。制卡属于 `memo-cardest`，TXT 容器属于 `memo-txt`；本技能仅交付本地 PNG/SVG/HTML 等绘图源或规定 LaTeX 代码。

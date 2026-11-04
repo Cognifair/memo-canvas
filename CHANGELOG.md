@@ -2,6 +2,13 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.0.1 — 2026-11-04
+
+影响面：memo-canvas(技能名称、调用示例与系列引用) / memo-ankigo / memo-txt
+
+- 将 Anki 迁移技能标识统一为 `memo-ankigo`，TXT 技能标识统一为 `memo-txt`，更新安装路径与系列引用。
+- 本次仅调整命名与文档；Anki 历史迁移包格式保持兼容。
+
 ## v2.0.0 — 2026-11-03
 
 影响面：memo-canvas(SKILL.md, references/tables.md, references/redraw.md, references/flowcharts.md, scripts/image_pipeline.py, scripts/test_image_pipeline.py, agents/openai.yaml, version.json, README.md) / memo-table(本地兼容入口)
