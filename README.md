@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.0.1
+# 墨兰迪 Memo-Canvas v2.0.2
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -13,6 +13,8 @@
 3. 用墨兰迪精美重绘
 
 选项保留用户指定文案，但本技能本身只交付本地文件，不实际上传。纯文本制表不问图片选项。精美重绘按内容分工：一般图与流程图用 SVG，数学图可用 SVG/TikZ，化学结构可识别后交由 RDKit 绘图；再调字号、线宽、间距并分别核验语义与视觉。流程图先核对节点、箭头、条件和回路，不为好看改连接。
+
+**重绘准入是硬规则：** 没有源图/清晰裁切、当前模型不能看图、不能先出一张代表图、不能执行碰撞/箭头/标注审计时，只能原样或高清化；不得仅凭文字描述自由编造机构图或流程图，再把示意图说成“忠实重绘”。详细检查表见 [重绘准入与交付闸门](references/redraw-gates.md)。
 
 `scripts/image_pipeline.py` 提供原样复制、Pillow 传统增强、已知 SMILES/Molfile 的 RDKit 绘图。没有捆绑 MolScribe、DECIMER、DeTikZify 权重或端到端识图适配器；不绑定 OpenAI，当前模型不能看图时须使用外部识别工具或用户提供的结构。低清图片无法辨认的内容不会自动猜补。详见 [重绘流程](references/redraw.md) 和 [流程图流程](references/flowcharts.md)。
 
