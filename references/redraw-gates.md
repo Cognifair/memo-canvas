@@ -2,6 +2,19 @@
 
 这份文件是硬规则，不是建议。目标：在出图前拦住“文字压图元、图元乱重叠、箭头断裂、示意图冒充忠实重绘”。
 
+## 零、化学结构专用：RDKit 必须已加载
+
+- 只要任务是**绘制/重绘有机结构或反应式**，先运行：
+
+  ```text
+  python scripts/canvas.py doctor --require rdkit
+  ```
+
+- 退出码非 0 → 停下，安装/激活隔离运行时；不得改用系统 Python、手写 SVG、matplotlib 或只凭 OCR 文本拼结构。
+- 只允许通过 `python scripts/image_pipeline.py chemistry --smiles/--molfile` 生成；`canvas.py` 会自动切到 `.runtime`。
+- 图片转结构必须先得到可核对的 SMILES/Molfile；MolScribe/DECIMER 包存在不等于权重已加载，真实推理未验证时不得宣称结构正确。
+- 没有可用识别模型时：让用户提供 SMILES/Molfile，或退回原样/高清化，不猜结构。
+
 ## 一、准入：什么情况不许重绘
 
 | 条件 | 处理 |

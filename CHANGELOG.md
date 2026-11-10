@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.1 — 2026-11-10
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, references/toolchain.md, references/redraw-gates.md, references/cli-contract.md, scripts/canvas.py)
+
+### 变更
+
+- `canvas.py doctor` 增加 `--require`：化学结构强制 `--require rdkit`，未加载时退出 1，不再让模型回退到手写 SVG/matplotlib。
+- 文档明确：画有机结构/反应式必须先跑 RDKit 预检；图片转结构还需要 MolScribe/DECIMER 的真实模型，包存在不等于权重已加载。
+- 公式、流程图、SVG、表格同样要求先跑实际命令/doctor，不能把“命令存在”当成“已生成成功”。
+
 ## v2.1.0 — 2026-11-07
 
 影响面：memo-canvas（本地工具链、可选识别适配器、测试与调用文档）；锁定表格渲染包不变。

@@ -2,10 +2,10 @@
 name: memo-canvas
 description: 墨兰迪 Memo-Canvas（原 Memo-Table），制作表格图片与 LaTeX array 表格，并处理扫描图片公式、数学图、化学结构、流程图的原样保留、传统高清化和忠实重绘。用户提到墨兰迪、Memo-Canvas、Memo-Table、表格转图片或扫描图重绘时使用；不负责 Markji 账户、牌组、上传与 TXT 容器。
 metadata:
-  version: "2.1.0"
+  version: "2.1.1"
 ---
 
-# 墨兰迪 Memo-Canvas v2.1.0
+# 墨兰迪 Memo-Canvas v2.1.1
 
 调用名 `$memo-canvas`；旧称「墨记表格制作 Memo-Table」「Maimemo Table」用于意图兼容，`$memo-table` 本地兼容入口转入本技能。不将品牌名称理解成必须使用莫兰迪色系。保留原有六种表格输出及锁定包，新增图像处理入口；不是化学识别模型或通用 OCR 的捆绑包。
 
@@ -62,9 +62,12 @@ metadata:
 ## 工具与能力边界
 
 - **只允许稳定 CLI**：入口和退出码见 [references/cli-contract.md](references/cli-contract.md)。不要临时写 `figgen.py`、手拼 SVG/HTML 或用 matplotlib 自由画机构图；没有对应命令时停下说明。
+- **化学结构/反应式强制 RDKit**：进入化学路线前必须运行 `python scripts/canvas.py doctor --require rdkit`；退出 1 就停下安装/激活隔离运行时，不得用系统 Python、手写 SVG 或只靠 OCR 文本代替。生成只走 `image_pipeline.py chemistry`（`canvas.py` 会自动切到 `.runtime`），禁止手画结构或凭文字猜结构。
+- **图片转结构**需要 MolScribe/DECIMER 的真实模型，不只是包名存在；`doctor --require molscribe`/`decimer` 只证明包可加载，不证明权重推理通过。没有可运行模型时停下，要求用户提供 SMILES/Molfile，或不重绘。
+- 公式、流程图、SVG、表格也先按 [references/toolchain.md](references/toolchain.md) 跑 `doctor`/实际命令；工具必须实际加载，不能把“命令存在”当成“已生成成功”。
 - 需要重绘后端时先读 [references/toolchain.md](references/toolchain.md)：`python scripts/canvas.py setup` 安装隔离核心依赖，`doctor` 检查可用性；`formula`、`flowchart`、`svg` 分别调用 MathJax、Graphviz WASM、sharp，保存可编辑输入与未审计状态。不要为了图像任务改用这些引擎渲染锁定表格。
 - `python <skill-dir>/scripts/image_pipeline.py --help`：原样复制、Pillow 增强、从已知 SMILES/Molfile 用 RDKit 生成 SVG/PNG。它不识别图片里的分子。
-- 化学结构新绘与样式：使用本技能 `.runtime/python` 的 Python（Windows 为 `Scripts/python.exe`），避免误用缺 RDKit 的系统环境。`chemistry --style memo --explicit-methyl` 提供浅薄荷底、深绿线条与显式 CH₃；这是墨墨风格启发，非官方规范，默认仍为标准样式。完整示例见 [references/toolchain.md](references/toolchain.md)。
+- 化学结构新绘与样式：**必须先用 `doctor --require rdkit` 确认 RDKit 已加载**，并使用本技能 `.runtime/python` 的 Python（Windows 为 `Scripts/python.exe`），避免误用缺 RDKit 的系统环境。`chemistry --style memo --explicit-methyl` 提供浅薄荷底、深绿线条与显式 CH₃；这是墨墨风格启发，非官方规范，默认仍为标准样式。完整示例见 [references/toolchain.md](references/toolchain.md)。
 - 使用环境提供的 Python、Node 和依赖；运行前检查实际可用性。已授权安装普通依赖时可用 uv 隔离环境；模型权重、大型下载或额外服务需先说明并获得确认，不自动安装另一个 Skill。
 - 多模态模型可识图并编写 SVG；纯文本模型需要外部视觉/结构识别工具或用户提供明确结构。缺失时指出缺项，不假装看过图片，不把放大冒充重绘。
 - 不绑定 OpenAI API；已提供 MolScribe、DECIMER、pix2tex 的可选识别适配器与独立安装入口，未捆绑权重，真实推理需另验。DeTikZify 仍未接入。模块存在、接口模拟测试通过不等于真实扫描识别验证。

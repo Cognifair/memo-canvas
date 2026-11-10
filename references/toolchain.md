@@ -9,9 +9,12 @@
 ```text
 python scripts/canvas.py setup
 python scripts/canvas.py doctor
+python scripts/canvas.py doctor --require rdkit
 ```
 
 `doctor` 检查实际 Python 模块和 Node 加载情况，列出独立识别环境；模块存在或环境存在均不等于模型已加载、推理成功。可用性以实际运行记录为准。Node 使用 package-lock.json，Python 固定直接依赖；ML 可选依赖的传递版本未全量锁定，安装失败须报告，不自动改系统 Python 或降级全局依赖。
+
+**化学结构强制：** 进入有机结构/反应式绘制前必须跑 `doctor --require rdkit`，非 0 就停止；不得用系统 Python（可能无 RDKit）、手写 SVG 或只靠 OCR 文本拼结构。`--require molscribe/decimer` 只证明包可加载，真实权重推理另验。
 
 ## 公式：已知 LaTeX → SVG/PNG
 
