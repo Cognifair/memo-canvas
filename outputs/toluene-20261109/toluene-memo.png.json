@@ -1,0 +1,16 @@
+{
+  "mode": "chemistry",
+  "canonical_smiles": "Cc1ccccc1",
+  "structure_sha256": "5da1ba726f54707457f9b345ee903af6b90813f94b68ff79693d596e75457e77",
+  "width": 1200,
+  "height": 840,
+  "line_width": 3.5,
+  "font_size": 42,
+  "padding": 0.2,
+  "output": "C:\\Users\\Onoya\\.agents\\skills\\memo-canvas\\outputs\\toluene-20261109\\toluene-memo.png",
+  "style": "memo",
+  "explicit_methyl": true,
+  "methyl_labels": 1,
+  "source_verified": false,
+  "note": "Rendering only; structure fidelity to source requires separate review"
+}

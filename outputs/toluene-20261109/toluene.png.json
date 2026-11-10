@@ -1,0 +1,13 @@
+{
+  "mode": "chemistry",
+  "canonical_smiles": "Cc1ccccc1",
+  "structure_sha256": "5da1ba726f54707457f9b345ee903af6b90813f94b68ff79693d596e75457e77",
+  "width": 700,
+  "height": 500,
+  "line_width": 3.0,
+  "font_size": 24,
+  "padding": 0.08,
+  "output": "C:\\Users\\Onoya\\.agents\\skills\\memo-canvas\\outputs\\toluene-20261109\\toluene.png",
+  "source_verified": false,
+  "note": "Rendering only; structure fidelity to source requires separate review"
+}

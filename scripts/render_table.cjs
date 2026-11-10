@@ -18,6 +18,27 @@ function escapeHtml(value) {
     .replaceAll("\n", "<br>");
 }
 
+function loadPlaywright() {
+  const home = process.env.USERPROFILE || process.env.HOME || "";
+  const candidates = [
+    "playwright",
+    path.join(home, ".cache", "codex-runtimes", "codex-primary-runtime",
+      "dependencies", "node", "node_modules", "playwright"),
+    path.join(__dirname, "..", "node_modules", "playwright"),
+    path.join(process.cwd(), "node_modules", "playwright"),
+    process.env.MEMO_CANVAS_PLAYWRIGHT || "",
+  ].filter(Boolean);
+  const errors = [];
+  for (const candidate of candidates) {
+    try {
+      return require(candidate);
+    } catch (error) {
+      errors.push(`${candidate}: ${error.code || error.message}`);
+    }
+  }
+  throw new Error(errors.join("; "));
+}
+
 function findBrowser() {
   const candidates = [
     process.env.MAIMEMO_TABLE_BROWSER,
@@ -286,9 +307,9 @@ fs.writeFileSync(htmlPath, html, "utf8");
 
 let chromium;
 try {
-  ({ chromium } = require("playwright"));
+  chromium = loadPlaywright().chromium;
 } catch (error) {
-  fail("the playwright package is unavailable; locate workspace dependencies and set NODE_PATH to their Node packages directory");
+  fail("the playwright package is unavailable; set NODE_PATH to a node_modules directory containing playwright");
 }
 
 const executablePath = findBrowser();

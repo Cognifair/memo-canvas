@@ -62,6 +62,24 @@ def run(args):
     options.bondLineWidth = args.line_width
     options.fixedFontSize = args.font_size
     options.padding = args.padding
+    style = getattr(args, "style", "standard")
+    explicit_methyl = getattr(args, "explicit_methyl", False)
+    if style == "memo":
+        # Memo-inspired local preset, not an official brand specification.
+        ink = (23 / 255, 107 / 255, 83 / 255)
+        options.setAtomPalette({-1: ink})
+        options.setSymbolColour(ink)
+        options.setBackgroundColour((247 / 255, 251 / 255, 249 / 255))
+    methyl_labels = 0
+    if explicit_methyl:
+        for atom in mol.GetAtoms():
+            # Only label ordinary terminal CH3; never hide isotope/charge/radical data.
+            if (atom.GetAtomicNum() == 6 and not atom.GetIsAromatic()
+                    and atom.GetDegree() == 1 and atom.GetTotalNumHs() == 3
+                    and atom.GetFormalCharge() == 0 and atom.GetIsotope() == 0
+                    and atom.GetNumRadicalElectrons() == 0):
+                atom.SetProp("atomLabel", "CH<sub>3</sub>")
+                methyl_labels += 1
     rdMolDraw2D.PrepareAndDrawMolecule(drawer, mol)
     drawer.FinishDrawing()
     rendered = drawer.GetDrawingText()
@@ -74,6 +92,8 @@ def run(args):
               "width": args.width, "height": args.height,
               "line_width": args.line_width, "font_size": args.font_size,
               "padding": args.padding, "output": str(output),
+              "style": style, "explicit_methyl": explicit_methyl,
+              "methyl_labels": methyl_labels,
               "source_verified": False,
               "note": "Rendering only; structure fidelity to source requires separate review"}
     metadata.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -99,6 +119,10 @@ def main():
     chemistry.add_argument("--line-width", type=float, default=2)
     chemistry.add_argument("--font-size", type=int, default=24)
     chemistry.add_argument("--padding", type=float, default=.08)
+    chemistry.add_argument("--style", choices=("standard", "memo"), default="standard",
+                           help="memo: green ink on pale mint; inspired, not official branding")
+    chemistry.add_argument("--explicit-methyl", action="store_true",
+                           help="Display ordinary terminal methyl carbons as CH3")
     args = parser.parse_args()
     try:
         result = run(args)

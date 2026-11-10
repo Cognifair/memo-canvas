@@ -1,0 +1,6 @@
+# Optional ML environment; trusted checkpoint is provided separately.
+MolScribe==1.1.1
+# Old torch/RDKit binaries are incompatible with NumPy 2; OpenCV 5 forces NumPy 2.
+numpy==1.26.4
+opencv-python==4.11.0.86
+opencv-python-headless==4.11.0.86

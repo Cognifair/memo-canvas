@@ -1,0 +1,2 @@
+# Optional ML environment; first initialization may download model weights.
+pix2tex==0.1.4

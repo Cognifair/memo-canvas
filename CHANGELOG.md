@@ -2,6 +2,19 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.0 — 2026-11-07
+
+影响面：memo-canvas（本地工具链、可选识别适配器、测试与调用文档）；锁定表格渲染包不变。
+
+- 增加隔离核心安装入口、依赖清单、Node 锁文件和 doctor，明确可用、缺失与未推理验证的区别。
+- 接入 MathJax LaTeX→SVG/PNG、Graphviz WASM 节点/边 JSON→流程图及 sharp SVG→PNG，拒绝覆盖，保存可编辑输入和未审计记录。
+- 增加 MolScribe、DECIMER、pix2tex 的真实调用适配器和独立环境安装入口；大型依赖及模型下载必须显式确认，不捆绑权重、不自动上传、不自动采用识别候选。
+- 本机安装验证后修正 MolScribe 的 Python 3.10 默认值，支持共享识别运行环境及本地权重默认路径，延长大型依赖安装超时。
+- 增加渲染行为、安全拒绝及识别接口契约测试；保留 v2.0.2 准入/交付闸门。模型识别测试不冒充真实权重推理验证。
+- 增加稳定 CLI 契约：表格、图片、公式、流程图统一走已列命令；禁止临时写 `figgen.py`、手拼 SVG/HTML 或自由画机构图。
+- 化学样式测试缺 RDKit 时改为 `SkipTest`，不再让系统 Python 整套测试直接失败；`.runtime` 下仍执行真实 RDKit 检查。
+- `render_table.cjs` 自动查找 Codex 运行时、技能目录和工作区 `node_modules` 里的 Playwright；找不到时才要求 `NODE_PATH`/`MEMO_CANVAS_PLAYWRIGHT`。
+
 ## v2.0.2 — 2026-11-07
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, references/redraw.md, references/redraw-gates.md)

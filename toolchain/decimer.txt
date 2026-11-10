@@ -1,0 +1,2 @@
+# Optional ML environment; first import may download model weights.
+DECIMER==2.8.1

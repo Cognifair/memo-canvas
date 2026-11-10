@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.0.2
+# 墨兰迪 Memo-Canvas v2.1.0
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -16,7 +16,9 @@
 
 **重绘准入是硬规则：** 没有源图/清晰裁切、当前模型不能看图、不能先出一张代表图、不能执行碰撞/箭头/标注审计时，只能原样或高清化；不得仅凭文字描述自由编造机构图或流程图，再把示意图说成“忠实重绘”。详细检查表见 [重绘准入与交付闸门](references/redraw-gates.md)。
 
-`scripts/image_pipeline.py` 提供原样复制、Pillow 传统增强、已知 SMILES/Molfile 的 RDKit 绘图。没有捆绑 MolScribe、DECIMER、DeTikZify 权重或端到端识图适配器；不绑定 OpenAI，当前模型不能看图时须使用外部识别工具或用户提供的结构。低清图片无法辨认的内容不会自动猜补。详见 [重绘流程](references/redraw.md) 和 [流程图流程](references/flowcharts.md)。
+`scripts/image_pipeline.py` 提供原样复制、Pillow 传统增强、已知 SMILES/Molfile 的 RDKit 绘图。`scripts/canvas.py` 新增隔离安装、自检、MathJax 公式渲染、Graphviz WASM 流程图布局及 SVG→PNG；另有 MolScribe、DECIMER、pix2tex 可选识别适配器，未捆绑模型权重，真实推理需另验，DeTikZify 未接入。不绑定 OpenAI，低清图片无法辨认的内容不会自动猜补。具体命令与依赖见 [可执行工具链](references/toolchain.md)，审查流程见 [重绘流程](references/redraw.md) 和 [流程图流程](references/flowcharts.md)。
+
+**只允许稳定 CLI：** 表格、图片、公式、流程图都走 `canvas.py` / `image_pipeline.py` / `render_table.cjs` 的已列命令，不临时写 `figgen.py`、手拼 SVG/HTML 或自由画机构图。入口和退出码见 [CLI 契约](references/cli-contract.md)。
 
 ## 六种样式
 
@@ -74,7 +76,7 @@ Codex / WorkBuddy 安装或更新后新开会话或重启客户端。使用时�
 node scripts/render_table.cjs input.json output.png output.html
 ```
 
-默认 2000 px 宽；可选 `width`、`fontFamily`、`theme`（`accent`/`light`/`deep`/`white`）。该脚本只处理 `rounded`，其它样式会提示改用锁定渲染器。
+默认 2000 px 宽；可选 `width`、`fontFamily`、`theme`（`accent`/`light`/`deep`/`white`）。该脚本只处理 `rounded`，其它样式会提示改用锁定渲染器。Playwright 会自动查找 Codex 运行时、技能目录和当前工作区的 `node_modules`；仍找不到时才需要设置 `NODE_PATH` 或 `MEMO_CANVAS_PLAYWRIGHT`。
 
 ## 锁定三款（固定结构）
 

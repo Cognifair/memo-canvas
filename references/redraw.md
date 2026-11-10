@@ -2,15 +2,15 @@
 
 ## 先检查能力，而非假装后端存在
 
-询问开局选项后，检查当前模型能否查看图片，以及所选路线的实际工具。Memo-Canvas 已提供原样复制、传统增强、从已知 SMILES/Molfile 生成分子 SVG/PNG 的脚本；图片识别由实际可用的模型或工具承担，不包含自动安装器。使用前核对对应项目当前接口和许可证，不直接复制上游代码或声称获得官方背书。
+询问开局选项后，检查当前模型能否查看图片，以及所选路线的实际工具。先读 [可执行工具链](toolchain.md)，运行 doctor；缺核心依赖时可使用隔离安装入口。已接入公式/SVG/流程图渲染及可选识别适配器，识别权重需另配，不能把适配器存在说成真实推理已验证。使用前核对对应项目接口和许可证，不直接复制上游代码或声称获得官方背书。
 
 **先过 [重绘准入与交付闸门](redraw-gates.md)**：没有源图/裁切、不能看图、不能做代表图和审计时，只能原样/高清化；不得仅凭文字描述自由编造机构图或流程图。机构图必须先建立构件/连接/箭头/标注清单，不能手填坐标直接画。
 
 | 类型 | 重建路线 | 不可擅自改变 |
 |---|---|---|
-| 图片公式 | 多模态模型或公式 OCR 提取 LaTeX，再由可用的数学渲染器生成 SVG/PNG | 正负号、上下标、括号、等号、不等号、矩阵结构 |
+| 图片公式 | 多模态模型或 pix2tex 适配器提取 LaTeX，核对后用 canvas.py formula 生成 SVG/PNG | 正负号、上下标、括号、等号、不等号、矩阵结构 |
 | 表格 | 提取文字与行列关系，再读 [tables.md](tables.md)；按已指定样式或选型建立 HTML/CSS | 数值、单位、表头、合并单元格关系 |
-| 流程/一般示意图 | 多模态模型参照原图编写 SVG | 箭头方向、分组、标签及连接关系 |
+| 流程/一般示意图 | 源图提取节点/边清单后用 canvas.py flowchart；复杂布局用审查后的 SVG | 箭头方向、分组、标签及连接关系 |
 | 数学科学图 | SVG/TikZ；已有 DeTikZify 时可试验图转 TikZ | 坐标、角标、虚实线、已知几何和函数关系 |
 | 单个化学结构 | MolScribe 或 DECIMER 识别，再交给 RDKit | 原子、键级、电荷、同位素、立体信息 |
 
@@ -47,12 +47,15 @@ HTML 截图必须先确认浏览器/截图工具实际存在；没有就交付 S
 
 最多做两轮有针对性的视觉修改；仍有问题则交付草稿和问题清单，不宣称完成。模糊到无法判断的内容须由用户核对或补清晰图。
 
-## 可选上游参考（未捆绑）
+## 上游参考（未捆绑代码/模型权重）
 
 - SVG 重绘规范：https://github.com/ShiweiWu-545/Scientific-Svg-Redraw
 - 科学图转 TikZ：https://github.com/potamides/DeTikZify
 - 分子识别：https://github.com/thomas0809/MolScribe
 - 分子识别备选：https://github.com/Kohulan/DECIMER-Image_Transformer
 - 分子绘图：https://github.com/rdkit/rdkit
+- 公式识别：https://github.com/lukas-blecher/LaTeX-OCR
+- 公式渲染：https://github.com/mathjax/MathJax-src
+- 图布局 WASM：https://github.com/mdaines/viz-js
 
 参考不是硬依赖；不要为本任务自动安装另一个 Skill。双路识别仅用于疑难图或用户要求：比较规范化且考虑立体信息的结构，不直接比较原始 SMILES 字符串。
