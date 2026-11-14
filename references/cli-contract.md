@@ -15,7 +15,7 @@ node scripts/render_table.cjs <input.json> <output.png> [output.html]
 - 化学结构/反应式：`python scripts/canvas.py doctor --require rdkit`，非 0 就直接停止；
 - 图片转结构：`doctor --require molscribe` / `decimer` 只说明包可加载，真实权重推理另验；没有可运行模型就让用户提供 SMILES/Molfile；
 - 公式/流程图/SVG：先跑对应实际命令，不能把“命令存在”当成“已生成成功”；
-- 表格：需要 Playwright + 浏览器 + 字体；`render_table.cjs` 会自动查找，找不到才设置 `NODE_PATH`/`MEMO_CANVAS_PLAYWRIGHT`。
+- 表格：需要 Playwright + 浏览器 + 字体；先跑 `python scripts/canvas.py doctor --require table` 或 `node scripts/render_table.cjs --doctor`，缺失就停。默认参数只能由 `render_table.cjs` 提供；不要复制 CSS 自写 HTML。宽/字号/字体/标题/透明底/颜色/列宽任一偏离，出图前确认并记录 `defaults`/`overrides`。
 
 锁定样式仍通过 `scripts/locked/` 的固定模板；不修改锁定包。
 

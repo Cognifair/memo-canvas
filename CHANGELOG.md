@@ -2,6 +2,17 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.2 — 2026-11-14
+
+影响面：memo-canvas(SKILL.md, README.md [未改], CHANGELOG.md, references/cli-contract.md, references/tables.md, scripts/canvas.py, scripts/render_table.cjs)
+
+### 修复
+
+- `canvas.py doctor --require table` 与 `render_table.cjs --doctor` 检查 Playwright 和本机浏览器；缺失时明确失败，不允许静默 fallback。
+- 表格默认参数改为硬约束：只能走 `render_table.cjs`，不得复制 `table-theme.css` 自写 HTML，也不得用 Python Playwright 另做截图。
+- 宽、字号、字体、标题、透明底、颜色、列宽任一偏离，必须出图前说明并确认；交付时列出 `defaults`/`overrides`。
+- 记录「先出图再问白底/透明」属于顺序错误，不能把自写模板说成墨兰迪默认。
+
 ## v2.1.1 — 2026-11-10
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, references/toolchain.md, references/redraw-gates.md, references/cli-contract.md, scripts/canvas.py)

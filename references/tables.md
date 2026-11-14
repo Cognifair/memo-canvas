@@ -67,6 +67,19 @@
 
 Treat these as defaults. Preserve a user's explicit palette, font, dimensions, alignment, background, or hierarchy choices.
 
+## 默认参数是硬约束
+
+默认值只能由 `scripts/render_table.cjs` 提供。不要因为依赖缺失就复制它的 CSS、另写 HTML 或用 Python Playwright 截图；那已经不是在用墨兰迪，而是在重做一个自己的渲染器。
+
+- 先运行 `python scripts/canvas.py doctor --require table` 或 `node scripts/render_table.cjs --doctor`；
+- Playwright / Chrome / Edge / 字体缺失 → 停止，说明缺项并请求安装/授权；不得静默 fallback；
+- 默认：2000 px 宽、`title` 必填、透明底、32 px 圆角、渲染器字体/间距；不要擅自删除标题；
+- 任何默认偏离（宽、字号、字体、标题、透明底、颜色、列宽、行高）都要在**出图前**说明理由并让用户确认；
+- 不能先按自己的参数出图，再拿结果问用户“要白底还是透明”；
+- 交付时列出 `defaults` 与 `overrides`；没有 overrides 就说“使用默认参数”。
+
+手机端字号变小是默认参数的已知取舍；如果用户要求为手机放大，这属于显式偏离，先说明 2000/25 在 390 px 卡片上的可读性，再让用户选，不静默改成 1080/30。
+
 ## 图片渲染流程（选项 ①-④）
 
 ### 圆角（`rounded`，通用结构）

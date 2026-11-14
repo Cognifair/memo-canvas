@@ -71,20 +71,31 @@ def doctor(args):
             state['package_present'] = probe.returncode == 0 and probe.stdout.strip() == 'True'
         optional[backend] = state
     record = recognition_root() / 'recognition-validation.json'
+    required = list(getattr(args, 'require', []) or [])
+    table = None
+    if 'table' in required:
+        table = {'ok': False, 'error': 'node missing'}
+        if node:
+            probe = subprocess.run([node, str(ROOT / 'scripts/render_table.cjs'), '--doctor'],
+                                   capture_output=True, text=True, timeout=30)
+            table = json.loads(probe.stdout) if probe.returncode == 0 else {
+                'ok': False, 'error': (probe.stderr or probe.stdout).strip()[:500]}
+            table['ok'] = probe.returncode == 0
     checks = {
         'rdkit': modules['rdkit'],
         'chemistry': modules['rdkit'],
         'molscribe': optional['molscribe']['package_present'] or modules['molscribe'],
         'decimer': optional['decimer']['package_present'] or modules['DECIMER'],
         'pix2tex': optional['pix2tex']['package_present'] or modules['pix2tex'],
+        'table': bool(table and table.get('ok')),
     }
-    required = list(getattr(args, 'require', []) or [])
     missing = [name for name in required if not checks.get(name, False)]
     if missing:
         raise ValueError('required toolchain not loaded: ' + ', '.join(missing)
                          + '; install/activate the isolated runtime and rerun doctor')
     return {'python':sys.executable, 'modules_present_not_inference_verified':modules,
             'required': required, 'requirements_ok': not missing,
+            'table_renderer':table,
             'optional_environments':optional,
             'recognition_runtime_root':str(recognition_root()),
             'local_molscribe_checkpoint':str(recognition_root() / 'models/molscribe-swin-base-1m.pth') if (recognition_root() / 'models/molscribe-swin-base-1m.pth').is_file() else 'not_downloaded',
@@ -163,7 +174,7 @@ def main():
     p.add_argument('--python', help='Python version/path for a new environment; MolScribe defaults to 3.10')
     doctor_parser = modes.add_parser('doctor')
     doctor_parser.add_argument('--require', action='append',
-                               choices=['rdkit', 'chemistry', 'molscribe', 'decimer', 'pix2tex'],
+                               choices=['rdkit', 'chemistry', 'molscribe', 'decimer', 'pix2tex', 'table'],
                                default=[])
     for mode in ['formula', 'svg', 'flowchart']:
         p = modes.add_parser(mode)

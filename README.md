@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.1.1
+# 墨兰迪 Memo-Canvas v2.1.2
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 

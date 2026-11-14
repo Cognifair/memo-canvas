@@ -56,6 +56,17 @@ function findBrowser() {
 }
 
 const [, , inputArg, pngArg, htmlArg] = process.argv;
+if (inputArg === "--doctor") {
+  try {
+    loadPlaywright();
+    const browser = findBrowser();
+    if (!browser) fail("no supported local Chrome, Edge, or Chromium executable was found");
+    console.log(JSON.stringify({ playwright: "available", browser }, null, 2));
+    process.exit(0);
+  } catch (error) {
+    fail(`table renderer is not ready: ${error.message || error}`);
+  }
+}
 if (!inputArg || !pngArg) {
   fail("usage: node render_table.cjs <input.json> <output.png> [output.html]");
 }

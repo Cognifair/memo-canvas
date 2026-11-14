@@ -1,5 +1,5 @@
 interface:
-  display_name: "墨兰迪 Memo-Canvas v2.1.1"
+  display_name: "墨兰迪 Memo-Canvas v2.1.2"
   short_description: "保留六款表格制作，新增扫描图三档处理及公式、化学结构和流程图忠实重绘"
   brand_color: "#36b59d"
   default_prompt: "使用 $memo-canvas 处理这份材料：表格先检查结构并选型；需要处理扫描图时先让我选择原样、简单高清化或精美重绘，保留内容关系并核验预览。"
