@@ -28,8 +28,8 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
   "height": 900,
   "samples": 4000,
   "color": "#36B59D",
-  "axis_color": "#000000",
-  "background": "#FFFFFF",
+  "axis_color": "#8E8E8E",
+  "background": "transparent",
   "x_labels": [{"value": -3.14159, "text": "−π"}, {"value": 3.14159, "text": "π"}],
   "y_labels": [{"value": -1, "text": "-1"}, {"value": 1, "text": "1"}]
 }
@@ -40,8 +40,8 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
 - `x_labels` / `y_labels` 只画指定文字，不自动画其他刻度数字；
 - 超出 `yrange` 或非有限的点会断段，不画渐近线；需要渐近线或更多标注时明确说明；
 - `.png` 会生成同名 `.source.svg` 和 `.json`；`.svg` 只生成 SVG 和 `.json`；
-- 拒绝覆盖已有输出；默认白底，可用 `"background": "transparent"`。
-- 默认配色：曲线/关键内容 `#36B59D`，坐标轴和普通标签黑色；未指定时不要整图铺绿。
+- 拒绝覆盖已有输出；默认透明底，可显式设 `"background": "#FFFFFF"`。
+- 默认配色：曲线/关键内容 `#36B59D`，坐标轴和普通标签 `#8E8E8E`；透明底便于适配明暗背景，未指定时不要整图铺绿。
 
 可选版式字段：
 

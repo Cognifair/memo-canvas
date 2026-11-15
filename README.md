@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.1.6
+# 墨兰迪 Memo-Canvas v2.1.7
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -35,7 +35,7 @@
   "height": 900,
   "samples": 4000,
   "color": "#36B59D",
-  "axis_color": "#000000",
+  "axis_color": "#8E8E8E",
   "x_labels": [{"value": -3.14159, "text": "−π"}, {"value": 3.14159, "text": "π"}],
   "y_labels": [{"value": -1, "text": "-1"}, {"value": 1, "text": "1"}]
 }
@@ -45,9 +45,9 @@
 python scripts/canvas.py mathplot --input function.json --output plot.png
 ```
 
-只画 `x_labels` / `y_labels` 中指定的坐标文字，不自动添加其他刻度数字；函数值超出 `yrange` 时断段，不画渐近线。默认白底，可用 `"background": "transparent"`。支持 `sec`、`csc`、`cot`。
+只画 `x_labels` / `y_labels` 中指定的坐标文字，不自动添加其他刻度数字；函数值超出 `yrange` 时断段，不画渐近线。默认透明底；支持 `sec`、`csc`、`cot`。
 
-配色默认规则：**关键内容（曲线、标题）用少量 `#36B59D`，坐标轴和普通标签保持黑色**；用户没有另说时按这个规则，不把整图铺成绿色。
+配色默认规则：**关键内容（曲线、标题）用少量 `#36B59D`，坐标轴和普通标签用 `#8E8E8E`，默认透明底**；用户没有另说时按这个规则，不把整图铺成绿色。
 
 教材式坐标轴可选字段：
 

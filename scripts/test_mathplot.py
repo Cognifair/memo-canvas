@@ -106,7 +106,8 @@ class MathplotTests(unittest.TestCase):
             self.assertIn(">x</text>", svg)
             self.assertIn(">y</text>", svg)
             self.assertIn('fill="#36B59D"', svg)
-            self.assertIn('text-anchor="end"', svg)
+            self.assertIn('fill="#8E8E8E"', svg)
+            self.assertNotIn('<rect x="0" y="0"', svg)
             self.assertGreaterEqual(svg.count("<path"), 1)
             self.assertGreaterEqual(svg.count("<line"), 4)
 

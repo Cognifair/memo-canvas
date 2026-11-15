@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.7 — 2026-11-15
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, references/toolchain.md, scripts/mathplot.py, scripts/test_mathplot.py)
+
+### 变更
+
+- `mathplot` 默认改为透明底。
+- 默认坐标轴/普通标签改为 Memo-Designer 灰 `#8E8E8E`；关键内容仍只用少量 `#36B59D`。
+- 透明 PNG 已在白色和 `#121212` 深色背景上做过合成预览，灰线仍可辨。
+
 ## v2.1.6 — 2026-11-15
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, references/toolchain.md, scripts/test_mathplot.py)

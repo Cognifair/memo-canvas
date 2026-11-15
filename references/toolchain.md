@@ -40,8 +40,8 @@ python scripts/canvas.py formula --input formula.tex --output formula.png --font
   "height": 900,
   "samples": 4000,
   "color": "#36B59D",
-  "axis_color": "#000000",
-  "background": "#FFFFFF",
+  "axis_color": "#8E8E8E",
+  "background": "transparent",
   "x_labels": [{"value": -3.14159, "text": "−π"}, {"value": 3.14159, "text": "π"}],
   "y_labels": [{"value": -1, "text": "-1"}, {"value": 1, "text": "1"}]
 }
@@ -56,7 +56,7 @@ python scripts/canvas.py mathplot --input function.json --output plot.svg
 - `samples` 默认 4000，范围 16–200000；
 - 函数值超出 `yrange` 或非有限时断段；默认不画渐近线；
 - PNG 使用 sharp，按配置宽高输出，不再默认 2 倍；拒绝覆盖已有文件；
-- 默认配色只用少量 `#36B59D` 标关键内容（曲线/标题），坐标轴和普通标签黑色；
+- 默认透明底，坐标轴和普通标签用 `#8E8E8E`，关键内容（曲线/标题）用少量 `#36B59D`；便于在明暗背景上复用；
 - 可选 `axis_arrows`、`arrow_size`、`show_ticks`、`axis_names`、`title`/`title_color` 复刻带箭头、刻度、轴名和标题的教材式样式；刻度只出现在手动列出的标签位置；
 - 这是静态图入口，不提供拖动、交点、切线或 CAS；需要这些能力时先说明，不能把它冒充交互工具。
 

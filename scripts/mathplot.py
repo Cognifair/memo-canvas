@@ -306,8 +306,8 @@ def load_config(path: Path):
             raise ValueError(f"{name} must be an integer from {minimum} to {maximum}")
 
     color = data.get("color", "#36B59D")
-    axis_color = data.get("axis_color", "#000000")
-    background = data.get("background", "#FFFFFF")
+    axis_color = data.get("axis_color", "#8E8E8E")
+    background = data.get("background", "transparent")
     for name, value in [("color", color), ("axis_color", axis_color)]:
         if not isinstance(value, str) or not HEX_RE.fullmatch(value):
             raise ValueError(f"{name} must be a six-digit hex color")
