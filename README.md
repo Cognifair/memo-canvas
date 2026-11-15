@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.1.7
+# 墨兰迪 Memo-Canvas v2.1.8
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -62,6 +62,18 @@ python scripts/canvas.py mathplot --input function.json --output plot.png
   "title_color": "#36B59D"
 }
 ```
+
+## 默认视觉
+
+新生成的函数图/示意图默认：
+
+```text
+背景：透明
+坐标轴/普通标签：#8E8E8E
+关键内容（曲线/标题）：#36B59D（少量）
+```
+
+不把整图铺绿，不默认使用纯黑。锁定表格和原图/扫描图保留原样式；用户指定颜色优先。完整规则见 [默认视觉规则](references/visual-defaults.md)。
 
 ## 六种样式
 

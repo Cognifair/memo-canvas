@@ -2,12 +2,24 @@
 name: memo-canvas
 description: 墨兰迪 Memo-Canvas（原 Memo-Table），制作表格图片与 LaTeX array 表格，按表达式生成静态函数图 SVG/PNG，并处理扫描图片公式、数学图、化学结构、流程图的原样保留、传统高清化和忠实重绘。用户提到墨兰迪、Memo-Canvas、Memo-Table、函数图、表格转图片或扫描图重绘时使用；不负责 Markji 账户、牌组、上传与 TXT 容器。
 metadata:
-  version: "2.1.7"
+  version: "2.1.8"
 ---
 
-# 墨兰迪 Memo-Canvas v2.1.2
+# 墨兰迪 Memo-Canvas v2.1.8
 
 调用名 `$memo-canvas`；旧称「墨记表格制作 Memo-Table」「Maimemo Table」用于意图兼容，`$memo-table` 本地兼容入口转入本技能。不将品牌名称理解成必须使用莫兰迪色系。保留原有六种表格输出及锁定包，新增图像处理入口；不是化学识别模型或通用 OCR 的捆绑包。
+
+## 默认视觉
+
+用户没有另行指定时，新生成的函数图/示意图统一使用：
+
+```text
+背景：透明
+中性内容（坐标轴、刻度、普通标签）：#8E8E8E
+关键内容（主曲线、主标题、重点标记）：#36B59D（少量）
+```
+
+不把整图铺绿，不用纯黑作为默认中性色。锁定表格保留自身样式；原图/扫描图不改色。完整边界见 [references/visual-defaults.md](references/visual-defaults.md)。
 
 ## 先分任务，避免交叉询问
 

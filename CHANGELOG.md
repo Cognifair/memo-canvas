@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.8 — 2026-11-15
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/visual-defaults.md)
+
+### 默认视觉
+
+- 新生成的函数图/示意图默认：透明底、中性色 `#8E8E8E`、关键内容少量 `#36B59D`。
+- 锁定表格、原图/扫描图、化学结构默认不被强制改色；用户指定颜色优先。
+- 新增 [references/visual-defaults.md](references/visual-defaults.md)，说明适用范围和例外。
+
 ## v2.1.7 — 2026-11-15
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, references/toolchain.md, scripts/mathplot.py, scripts/test_mathplot.py)
