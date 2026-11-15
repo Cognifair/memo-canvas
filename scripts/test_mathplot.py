@@ -84,7 +84,7 @@ class MathplotTests(unittest.TestCase):
                 "width": 700,
                 "height": 850,
                 "samples": 500,
-                "color": "#D16056",
+                "color": "#36B59D",
                 "line_width": 5,
                 "axis_arrows": True,
                 "arrow_size": 14,
@@ -92,7 +92,7 @@ class MathplotTests(unittest.TestCase):
                 "show_ticks": True,
                 "y_label_side": "left",
                 "title": "y = arcsin(x)",
-                "title_color": "#D16056",
+                "title_color": "#36B59D",
                 "x_labels": [{"value": -1, "text": "-1"}, {"value": 0, "text": "0"}, {"value": 1, "text": "1"}],
                 "y_labels": [{"value": -1.5707963267948966, "text": "−π/2"},
                              {"value": 1.5707963267948966, "text": "π/2"}],
@@ -105,7 +105,7 @@ class MathplotTests(unittest.TestCase):
             self.assertIn("y = arcsin(x)", svg)
             self.assertIn(">x</text>", svg)
             self.assertIn(">y</text>", svg)
-            self.assertIn('fill="#D16056"', svg)
+            self.assertIn('fill="#36B59D"', svg)
             self.assertIn('text-anchor="end"', svg)
             self.assertGreaterEqual(svg.count("<path"), 1)
             self.assertGreaterEqual(svg.count("<line"), 4)

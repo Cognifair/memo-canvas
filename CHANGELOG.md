@@ -2,6 +2,15 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.6 — 2026-11-15
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, references/toolchain.md, scripts/test_mathplot.py)
+
+### 规则
+
+- 默认绘图只用少量 `#36B59D` 标关键内容（曲线/标题），坐标轴和普通标签保持黑色，不把整图铺绿。
+- 教材样式示例和测试从红色改为 `#36B59D`；`mathplot` 默认色本就是 `#36B59D`。
+
 ## v2.1.5 — 2026-11-15
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, scripts/mathplot.py, scripts/test_mathplot.py)

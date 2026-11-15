@@ -41,6 +41,7 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
 - 超出 `yrange` 或非有限的点会断段，不画渐近线；需要渐近线或更多标注时明确说明；
 - `.png` 会生成同名 `.source.svg` 和 `.json`；`.svg` 只生成 SVG 和 `.json`；
 - 拒绝覆盖已有输出；默认白底，可用 `"background": "transparent"`。
+- 默认配色：曲线/关键内容 `#36B59D`，坐标轴和普通标签黑色；未指定时不要整图铺绿。
 
 可选版式字段：
 
@@ -52,7 +53,7 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
   "show_ticks": true,
   "y_label_side": "left",
   "title": "y = arcsin(x)",
-  "title_color": "#D16056",
+  "title_color": "#36B59D",
   "title_dx": 0,
   "title_dy": 0
 }
