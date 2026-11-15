@@ -261,7 +261,7 @@ def load_config(path: Path):
         "color", "axis_color", "background", "line_width", "axis_width",
         "font_size", "margin", "x_labels", "y_labels",
         "axis_arrows", "arrow_size", "axis_names", "show_ticks",
-        "title", "title_color", "title_dx", "title_dy",
+        "title", "title_color", "title_dx", "title_dy", "y_label_side",
     }
     unknown = sorted(set(data) - allowed)
     if unknown:
@@ -343,6 +343,9 @@ def load_config(path: Path):
     title_dy = data.get("title_dy", 0)
     if not isinstance(title_dx, (int, float)) or not isinstance(title_dy, (int, float)):
         raise ValueError("title_dx/title_dy must be numbers")
+    y_label_side = data.get("y_label_side", "right")
+    if y_label_side not in {"left", "right"}:
+        raise ValueError("y_label_side must be 'left' or 'right'")
 
     x_labels = data.get("x_labels", [])
     y_labels = data.get("y_labels", [])
@@ -373,6 +376,7 @@ def load_config(path: Path):
         "title_color": title_color,
         "title_dx": float(title_dx),
         "title_dy": float(title_dy),
+        "y_label_side": y_label_side,
     }
 
 
@@ -511,13 +515,15 @@ def svg_document(config, segments):
             f'font-size="{config["font_size"]}">{html.escape(item["text"])}</text>'
         )
     label_axis_x = axis_x if has_y_axis else margin
+    y_label_anchor = "end" if config["y_label_side"] == "left" else "start"
+    y_label_offset = -config["font_size"] * 0.4 if config["y_label_side"] == "left" else config["font_size"] * 0.7
     for item in config["y_labels"]:
         if not (ymin <= item["value"] <= ymax):
             continue
         labels.append(
-            f'<text x="{label_axis_x + config["font_size"] * 0.7 + item["dx"]:.2f}" '
+            f'<text x="{label_axis_x + y_label_offset + item["dx"]:.2f}" '
             f'y="{py(item["value"]) + item["dy"]:.2f}" '
-            f'text-anchor="start" fill="{axis_color}" '
+            f'text-anchor="{y_label_anchor}" fill="{axis_color}" '
             f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
             f'font-size="{config["font_size"]}">{html.escape(item["text"])}</text>'
         )

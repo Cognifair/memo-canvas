@@ -2,6 +2,14 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.5 — 2026-11-15
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, scripts/mathplot.py, scripts/test_mathplot.py)
+
+### 新增
+
+- `mathplot` 增加 `y_label_side: "left" | "right"`，可复刻 y 轴标签在左侧的教材样式。
+
 ## v2.1.4 — 2026-11-15
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, references/cli-contract.md, references/toolchain.md, scripts/mathplot.py, scripts/test_mathplot.py)

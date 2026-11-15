@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.1.4
+# 墨兰迪 Memo-Canvas v2.1.5
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -55,6 +55,7 @@ python scripts/canvas.py mathplot --input function.json --output plot.png
   "arrow_size": 14,
   "axis_names": {"x": "x", "y": "y"},
   "show_ticks": true,
+  "y_label_side": "left",
   "title": "y = arcsin(x)",
   "title_color": "#D16056"
 }

@@ -50,6 +50,7 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
   "arrow_size": 14,
   "axis_names": {"x": "x", "y": "y"},
   "show_ticks": true,
+  "y_label_side": "left",
   "title": "y = arcsin(x)",
   "title_color": "#D16056",
   "title_dx": 0,
@@ -60,6 +61,7 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
 - `axis_arrows` 在 x/y 轴两端画实心箭头；`arrow_size` 为箭头长度；
 - `show_ticks` 只在 `x_labels` / `y_labels` 指定的位置画短刻度，不生成其他数字；
 - `axis_names` 只允许 `x` / `y` 两个键；
+- `y_label_side` 为 `left` 或 `right`，默认 `right`；
 - `title` 默认放在右上角，`title_dx` / `title_dy` 是像素偏移；标题颜色独立于曲线颜色。
 
 ## 工具必须先加载
