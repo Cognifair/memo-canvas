@@ -42,6 +42,26 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
 - `.png` 会生成同名 `.source.svg` 和 `.json`；`.svg` 只生成 SVG 和 `.json`；
 - 拒绝覆盖已有输出；默认白底，可用 `"background": "transparent"`。
 
+可选版式字段：
+
+```json
+{
+  "axis_arrows": true,
+  "arrow_size": 14,
+  "axis_names": {"x": "x", "y": "y"},
+  "show_ticks": true,
+  "title": "y = arcsin(x)",
+  "title_color": "#D16056",
+  "title_dx": 0,
+  "title_dy": 0
+}
+```
+
+- `axis_arrows` 在 x/y 轴两端画实心箭头；`arrow_size` 为箭头长度；
+- `show_ticks` 只在 `x_labels` / `y_labels` 指定的位置画短刻度，不生成其他数字；
+- `axis_names` 只允许 `x` / `y` 两个键；
+- `title` 默认放在右上角，`title_dx` / `title_dy` 是像素偏移；标题颜色独立于曲线颜色。
+
 ## 工具必须先加载
 
 - 化学结构/反应式：`python scripts/canvas.py doctor --require rdkit`，非 0 就直接停止；

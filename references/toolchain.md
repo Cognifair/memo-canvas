@@ -56,6 +56,7 @@ python scripts/canvas.py mathplot --input function.json --output plot.svg
 - `samples` 默认 4000，范围 16–200000；
 - 函数值超出 `yrange` 或非有限时断段；默认不画渐近线；
 - PNG 使用 sharp，按配置宽高输出，不再默认 2 倍；拒绝覆盖已有文件；
+- 可选 `axis_arrows`、`arrow_size`、`show_ticks`、`axis_names`、`title`/`title_color` 复刻带箭头、刻度、轴名和标题的教材式样式；刻度只出现在手动列出的标签位置；
 - 这是静态图入口，不提供拖动、交点、切线或 CAS；需要这些能力时先说明，不能把它冒充交互工具。
 
 ## 流程图：清单 → 自动布局

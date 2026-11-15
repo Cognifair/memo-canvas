@@ -73,6 +73,41 @@ class MathplotTests(unittest.TestCase):
             self.assertIn(">1</text>", svg)
             self.assertNotIn(">0</text>", svg)
 
+    def test_style_options(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            temp = Path(tmp)
+            config = temp / "style.json"
+            config.write_text(json.dumps({
+                "expression": "asin(x)",
+                "xrange": [-1.55, 1.55],
+                "yrange": [-2.2, 2.2],
+                "width": 700,
+                "height": 850,
+                "samples": 500,
+                "color": "#D16056",
+                "line_width": 5,
+                "axis_arrows": True,
+                "arrow_size": 14,
+                "axis_names": {"x": "x", "y": "y"},
+                "show_ticks": True,
+                "title": "y = arcsin(x)",
+                "title_color": "#D16056",
+                "x_labels": [{"value": -1, "text": "-1"}, {"value": 0, "text": "0"}, {"value": 1, "text": "1"}],
+                "y_labels": [{"value": -1.5707963267948966, "text": "−π/2"},
+                             {"value": 1.5707963267948966, "text": "π/2"}],
+            }), encoding="utf-8")
+            output = temp / "style.svg"
+            subprocess.run([sys.executable, "-B", str(ROOT / "scripts" / "canvas.py"),
+                            "mathplot", "--input", str(config), "--output", str(output)],
+                           check=True, capture_output=True, text=True)
+            svg = output.read_text(encoding="utf-8")
+            self.assertIn("y = arcsin(x)", svg)
+            self.assertIn(">x</text>", svg)
+            self.assertIn(">y</text>", svg)
+            self.assertIn('fill="#D16056"', svg)
+            self.assertGreaterEqual(svg.count("<path"), 1)
+            self.assertGreaterEqual(svg.count("<line"), 4)
+
     def test_refuses_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             temp = Path(tmp)

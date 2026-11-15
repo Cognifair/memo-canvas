@@ -2,7 +2,7 @@
 name: memo-canvas
 description: 墨兰迪 Memo-Canvas（原 Memo-Table），制作表格图片与 LaTeX array 表格，按表达式生成静态函数图 SVG/PNG，并处理扫描图片公式、数学图、化学结构、流程图的原样保留、传统高清化和忠实重绘。用户提到墨兰迪、Memo-Canvas、Memo-Table、函数图、表格转图片或扫描图重绘时使用；不负责 Markji 账户、牌组、上传与 TXT 容器。
 metadata:
-  version: "2.1.3"
+  version: "2.1.4"
 ---
 
 # 墨兰迪 Memo-Canvas v2.1.2

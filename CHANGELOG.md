@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.4 — 2026-11-15
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, references/cli-contract.md, references/toolchain.md, scripts/mathplot.py, scripts/test_mathplot.py)
+
+### 新增
+
+- `mathplot` 可选教材式版式：`axis_arrows`、`arrow_size`、`show_ticks`、`axis_names`、`title`、`title_color`、`title_dx/dy`。
+- 轴箭头固定在 x/y 两端；刻度只出现在手动列出的 `x_labels` / `y_labels` 位置；标题默认右上角。
+- 支持用该配置复刻 arcsin 类带箭头、±1、±π/2、x/y 轴名和红色标题的图。
+
 ## v2.1.3 — 2026-11-15
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, references/toolchain.md, scripts/canvas.py, scripts/canvas_render.cjs, scripts/mathplot.py, scripts/test_mathplot.py)

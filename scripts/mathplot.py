@@ -260,6 +260,8 @@ def load_config(path: Path):
         "expression", "xrange", "yrange", "width", "height", "samples",
         "color", "axis_color", "background", "line_width", "axis_width",
         "font_size", "margin", "x_labels", "y_labels",
+        "axis_arrows", "arrow_size", "axis_names", "show_ticks",
+        "title", "title_color", "title_dx", "title_dy",
     }
     unknown = sorted(set(data) - allowed)
     if unknown:
@@ -314,6 +316,34 @@ def load_config(path: Path):
     ):
         raise ValueError("background must be 'transparent' or a six-digit hex color")
 
+    axis_arrows = data.get("axis_arrows", False)
+    show_ticks = data.get("show_ticks", False)
+    if not isinstance(axis_arrows, bool):
+        raise ValueError("axis_arrows must be boolean")
+    if not isinstance(show_ticks, bool):
+        raise ValueError("show_ticks must be boolean")
+
+    arrow_size = data.get("arrow_size", 12)
+    if not isinstance(arrow_size, int) or not 4 <= arrow_size <= 40:
+        raise ValueError("arrow_size must be an integer from 4 to 40")
+
+    axis_names = data.get("axis_names", {})
+    if not isinstance(axis_names, dict) or set(axis_names) - {"x", "y"}:
+        raise ValueError("axis_names may contain only x and y")
+    for key, value in axis_names.items():
+        if not isinstance(value, str):
+            raise ValueError(f"axis_names.{key} must be a string")
+    title = data.get("title")
+    if title is not None and not isinstance(title, str):
+        raise ValueError("title must be a string")
+    title_color = data.get("title_color", color)
+    if not isinstance(title_color, str) or not HEX_RE.fullmatch(title_color):
+        raise ValueError("title_color must be a six-digit hex color")
+    title_dx = data.get("title_dx", 0)
+    title_dy = data.get("title_dy", 0)
+    if not isinstance(title_dx, (int, float)) or not isinstance(title_dy, (int, float)):
+        raise ValueError("title_dx/title_dy must be numbers")
+
     x_labels = data.get("x_labels", [])
     y_labels = data.get("y_labels", [])
     if not isinstance(x_labels, list) or not isinstance(y_labels, list):
@@ -335,6 +365,14 @@ def load_config(path: Path):
         "background": background,
         "x_labels": [_label(item, "x", i) for i, item in enumerate(x_labels)],
         "y_labels": [_label(item, "y", i) for i, item in enumerate(y_labels)],
+        "axis_arrows": axis_arrows,
+        "arrow_size": arrow_size,
+        "axis_names": axis_names,
+        "show_ticks": show_ticks,
+        "title": title,
+        "title_color": title_color,
+        "title_dx": float(title_dx),
+        "title_dy": float(title_dy),
     }
 
 
@@ -392,43 +430,122 @@ def svg_document(config, segments):
             f'fill="{html.escape(config["background"])}"/>'
         )
 
-    axes = ""
-    if xmin <= 0 <= xmax:
-        axes += (
-            f'<line x1="{margin}" y1="{py(0):.2f}" x2="{width - margin}" '
-            f'y2="{py(0):.2f}" stroke="{html.escape(config["axis_color"])}" '
+    axes = []
+    has_x_axis = ymin <= 0 <= ymax
+    has_y_axis = xmin <= 0 <= xmax
+    axis_y = py(0)
+    axis_x = px(0)
+    axis_color = html.escape(config["axis_color"])
+    if has_x_axis:
+        axes.append(
+            f'<line x1="{margin}" y1="{axis_y:.2f}" x2="{width - margin}" '
+            f'y2="{axis_y:.2f}" stroke="{axis_color}" '
             f'stroke-width="{config["axis_width"]}"/>'
         )
-    if ymin <= 0 <= ymax:
-        axes += (
-            f'<line x1="{px(0):.2f}" y1="{margin}" x2="{px(0):.2f}" '
-            f'y2="{height - margin}" stroke="{html.escape(config["axis_color"])}" '
+    if has_y_axis:
+        axes.append(
+            f'<line x1="{axis_x:.2f}" y1="{margin}" x2="{axis_x:.2f}" '
+            f'y2="{height - margin}" stroke="{axis_color}" '
             f'stroke-width="{config["axis_width"]}"/>'
         )
 
+    if config["axis_arrows"]:
+        size = config["arrow_size"]
+        half = size * 0.45
+        if has_x_axis:
+            axes.append(
+                f'<path d="M {width - margin} {axis_y:.2f} '
+                f'L {width - margin - size} {axis_y - half:.2f} '
+                f'L {width - margin - size} {axis_y + half:.2f} Z" '
+                f'fill="{axis_color}"/>'
+            )
+            axes.append(
+                f'<path d="M {margin} {axis_y:.2f} '
+                f'L {margin + size} {axis_y - half:.2f} '
+                f'L {margin + size} {axis_y + half:.2f} Z" '
+                f'fill="{axis_color}"/>'
+            )
+        if has_y_axis:
+            axes.append(
+                f'<path d="M {axis_x:.2f} {margin} '
+                f'L {axis_x - half:.2f} {margin + size} '
+                f'L {axis_x + half:.2f} {margin + size} Z" '
+                f'fill="{axis_color}"/>'
+            )
+            axes.append(
+                f'<path d="M {axis_x:.2f} {height - margin} '
+                f'L {axis_x - half:.2f} {height - margin - size} '
+                f'L {axis_x + half:.2f} {height - margin - size} Z" '
+                f'fill="{axis_color}"/>'
+            )
+
+    ticks = []
+    if config["show_ticks"]:
+        for item in config["x_labels"]:
+            if has_x_axis and xmin <= item["value"] <= xmax:
+                x = px(item["value"])
+                ticks.append(
+                    f'<line x1="{x:.2f}" y1="{axis_y - 6:.2f}" '
+                    f'x2="{x:.2f}" y2="{axis_y + 6:.2f}" '
+                    f'stroke="{axis_color}" stroke-width="{config["axis_width"]}"/>'
+                )
+        for item in config["y_labels"]:
+            if has_y_axis and ymin <= item["value"] <= ymax:
+                y = py(item["value"])
+                ticks.append(
+                    f'<line x1="{axis_x - 6:.2f}" y1="{y:.2f}" '
+                    f'x2="{axis_x + 6:.2f}" y2="{y:.2f}" '
+                    f'stroke="{axis_color}" stroke-width="{config["axis_width"]}"/>'
+                )
+
     labels = []
-    axis_in_plot = ymin <= 0 <= ymax
     for item in config["x_labels"]:
         if not (xmin <= item["value"] <= xmax):
             continue
         x = px(item["value"])
-        y = (py(0) if axis_in_plot else height - margin) + config["font_size"] * 1.3
+        y = (axis_y if has_x_axis else height - margin) + config["font_size"] * 1.3
         labels.append(
             f'<text x="{x + item["dx"]:.2f}" y="{y + item["dy"]:.2f}" '
-            f'text-anchor="middle" fill="{html.escape(config["axis_color"])}" '
+            f'text-anchor="middle" fill="{axis_color}" '
             f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
             f'font-size="{config["font_size"]}">{html.escape(item["text"])}</text>'
         )
-    axis_x = px(0) if xmin <= 0 <= xmax else margin
+    label_axis_x = axis_x if has_y_axis else margin
     for item in config["y_labels"]:
         if not (ymin <= item["value"] <= ymax):
             continue
         labels.append(
-            f'<text x="{axis_x + config["font_size"] * 0.7 + item["dx"]:.2f}" '
+            f'<text x="{label_axis_x + config["font_size"] * 0.7 + item["dx"]:.2f}" '
             f'y="{py(item["value"]) + item["dy"]:.2f}" '
-            f'text-anchor="start" fill="{html.escape(config["axis_color"])}" '
+            f'text-anchor="start" fill="{axis_color}" '
             f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
             f'font-size="{config["font_size"]}">{html.escape(item["text"])}</text>'
+        )
+
+    names = []
+    if has_y_axis and config["axis_names"].get("y"):
+        names.append(
+            f'<text x="{axis_x + config["font_size"] * 0.6:.2f}" '
+            f'y="{margin + config["font_size"] * 1.15:.2f}" '
+            f'text-anchor="start" fill="{axis_color}" '
+            f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
+            f'font-size="{config["font_size"]}">{html.escape(config["axis_names"]["y"])}</text>'
+        )
+    if has_x_axis and config["axis_names"].get("x"):
+        names.append(
+            f'<text x="{width - margin - config["font_size"] * 0.3:.2f}" '
+            f'y="{axis_y - config["font_size"] * 0.7:.2f}" '
+            f'text-anchor="end" fill="{axis_color}" '
+            f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
+            f'font-size="{config["font_size"]}">{html.escape(config["axis_names"]["x"])}</text>'
+        )
+    if config["title"]:
+        names.append(
+            f'<text x="{width - margin + config["title_dx"]:.2f}" '
+            f'y="{margin + config["font_size"] * 1.15 + config["title_dy"]:.2f}" '
+            f'text-anchor="end" fill="{html.escape(config["title_color"])}" '
+            f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
+            f'font-size="{config["font_size"]}">{html.escape(config["title"])}</text>'
         )
 
     path_markup = "\n".join(
@@ -437,13 +554,16 @@ def svg_document(config, segments):
         f'stroke-linejoin="round"/>'
         for path in paths
     )
-    label_markup = "\n".join(labels)
+    label_markup = "\n".join(labels + names)
+    tick_markup = "\n".join(ticks)
+    axis_markup = "\n".join(axes)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
 <defs><clipPath id="mathplot-clip"><rect x="{margin}" y="{margin}" width="{plot_w}" height="{plot_h}"/></clipPath></defs>
 {background}
 <g clip-path="url(#mathplot-clip)">
 {path_markup}
-{axes}
+{axis_markup}
+{tick_markup}
 </g>
 {label_markup}
 </svg>
