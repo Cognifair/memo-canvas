@@ -181,6 +181,9 @@ def main():
         p.add_argument('--input', required=True)
         p.add_argument('--output', required=True)
         p.add_argument('--font-size', type=int, default=32)
+    p = modes.add_parser('mathplot')
+    p.add_argument('--input', required=True)
+    p.add_argument('--output', required=True)
     p = modes.add_parser('recognize')
     p.add_argument('--backend', choices=['molscribe', 'decimer', 'pix2tex'], required=True)
     p.add_argument('--input', required=True)
@@ -201,6 +204,11 @@ def main():
         if args.backend == 'molscribe' and not args.checkpoint:
             args.checkpoint = str(recognition_root() / 'models/molscribe-swin-base-1m.pth')
     try:
+        if args.mode == 'mathplot':
+            from mathplot import run_mathplot
+            result = run_mathplot(args)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
         if args.mode in ['formula', 'svg', 'flowchart']:
             node = shutil.which('node')
             if not node:

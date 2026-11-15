@@ -109,9 +109,10 @@ async function flow(graph) {
   return {svg, dot};
 }
 
-async function render(mode, input, output, size=32) {
+async function render(mode, input, output, size=32, density=144) {
   if (!['formula','svg','flowchart'].includes(mode)) throw Error('Unknown renderer');
   if (!Number.isInteger(size) || size < 12 || size > 96) throw Error('Size must be 12..96');
+  if (!Number.isInteger(density) || density < 36 || density > 600) throw Error('Density must be 36..600');
   const suffix = path.extname(output).toLowerCase();
   if (!['.svg','.png'].includes(suffix)) throw Error('Output must be SVG or PNG');
   const sourceFile = output + (mode === 'formula' ? '.tex' : mode === 'flowchart' ? '.graph.json' : '.source.svg');
@@ -125,7 +126,7 @@ async function render(mode, input, output, size=32) {
   let data = Buffer.from(svg);
   if (suffix === '.png') {
     const sharp = dep('sharp');
-    data = await sharp(data, {density:144, limitInputPixels:40_000_000}).png().toBuffer();
+    data = await sharp(data, {density, limitInputPixels:40_000_000}).png().toBuffer();
   }
   const result = {mode, output:path.resolve(output), editable_source:path.resolve(sourceFile), source_verified:false, visual_audit:'not_checked', note:'Rendering is not source recognition or fidelity verification'};
   for (const p of targets) fs.mkdirSync(path.dirname(p), {recursive:true});
@@ -136,7 +137,7 @@ async function render(mode, input, output, size=32) {
 }
 
 if (require.main === module) {
-  const [mode, input, output, size] = process.argv.slice(2);
+  const [mode, input, output, size, density] = process.argv.slice(2);
   (async () => {
     if (mode === 'doctor') {
       const report = {};
@@ -145,8 +146,8 @@ if (require.main === module) {
       }
       console.log(JSON.stringify(report)); return;
     }
-    if (!input || !output) throw Error('Usage: canvas_render.cjs formula|svg|flowchart INPUT OUTPUT [FONT_SIZE]');
-    console.log(JSON.stringify(await render(mode, input, output, size ? Number(size) : 32), null, 2));
+    if (!input || !output) throw Error('Usage: canvas_render.cjs formula|svg|flowchart INPUT OUTPUT [FONT_SIZE] [DENSITY]');
+    console.log(JSON.stringify(await render(mode, input, output, size ? Number(size) : 32, density ? Number(density) : 144), null, 2));
   })().catch(e => {console.error(e.message); process.exitCode=1;});
 }
 module.exports = {safeSvg, formula, flow, render};

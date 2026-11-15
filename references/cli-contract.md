@@ -5,10 +5,42 @@
 ## 入口
 
 ```text
-python -B scripts/canvas.py setup|doctor|formula|svg|flowchart|recognize
+python -B scripts/canvas.py setup|doctor|formula|svg|flowchart|mathplot|recognize
 python -B scripts/image_pipeline.py original|enhance|chemistry
 node scripts/render_table.cjs <input.json> <output.png> [output.html]
 ```
+
+## 函数图：明确表达式 → SVG/PNG
+
+```text
+python -B scripts/canvas.py mathplot --input function.json --output plot.png
+python -B scripts/canvas.py mathplot --input function.json --output plot.svg
+```
+
+配置示例：
+
+```json
+{
+  "expression": "sin(x^2)cos(3x)+2sin(5x)/(1+x^2)+x/4",
+  "xrange": [-6, 6],
+  "yrange": [-5, 5],
+  "width": 1600,
+  "height": 900,
+  "samples": 4000,
+  "color": "#36B59D",
+  "axis_color": "#000000",
+  "background": "#FFFFFF",
+  "x_labels": [{"value": -3.14159, "text": "−π"}, {"value": 3.14159, "text": "π"}],
+  "y_labels": [{"value": -1, "text": "-1"}, {"value": 1, "text": "1"}]
+}
+```
+
+- 表达式只允许 `x`、数字、`+ - * / ^`、括号和 `sin/cos/tan/sec/csc/cot/asin/acos/atan/sinh/cosh/tanh/exp/log/ln/log10/sqrt/abs/floor/ceil`；
+- 支持隐式乘法：`2sin(5x)`、`x(x+1)`、`2pi`；
+- `x_labels` / `y_labels` 只画指定文字，不自动画其他刻度数字；
+- 超出 `yrange` 或非有限的点会断段，不画渐近线；需要渐近线或更多标注时明确说明；
+- `.png` 会生成同名 `.source.svg` 和 `.json`；`.svg` 只生成 SVG 和 `.json`；
+- 拒绝覆盖已有输出；默认白底，可用 `"background": "transparent"`。
 
 ## 工具必须先加载
 

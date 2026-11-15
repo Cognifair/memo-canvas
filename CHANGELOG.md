@@ -2,6 +2,23 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.1.3 — 2026-11-15
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/cli-contract.md, references/toolchain.md, scripts/canvas.py, scripts/canvas_render.cjs, scripts/mathplot.py, scripts/test_mathplot.py)
+
+### 新增
+
+- `canvas.py mathplot`：按明确函数表达式生成静态 SVG/PNG，不依赖浏览器、GeoGebra 或网络。
+- 表达式白名单解析器支持 `x`、三角函数/指数/对数/根号、`^`、隐式乘法（`2sin(5x)`、`x(x+1)`、`2pi`）；不执行任意 Python。
+- 配置支持 x/y 范围、采样数、宽高、曲线/坐标轴颜色、背景、仅指定坐标标签。
+- 超出 y 范围或非有限的点自动断段，不画渐近线；PNG 生成 `.source.svg` 与 `.json`。
+- `canvas_render.cjs` 增加可选 raster density 参数（默认仍为 144），`mathplot` 使用 72 以按配置宽高输出。
+
+### 边界
+
+- 只做静态函数图，不提供拖动、交点、切线、CAS 或动态几何。
+- 扫描图复刻仍走原三档/重绘闸门，不把表达式绘图当成识图。
+
 ## v2.1.2 — 2026-11-14
 
 影响面：memo-canvas(SKILL.md, README.md [未改], CHANGELOG.md, references/cli-contract.md, references/tables.md, scripts/canvas.py, scripts/render_table.cjs)

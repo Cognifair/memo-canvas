@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.1.2
+# 墨兰迪 Memo-Canvas v2.1.3
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -16,11 +16,36 @@
 
 **重绘准入是硬规则：** 没有源图/清晰裁切、当前模型不能看图、不能先出一张代表图、不能执行碰撞/箭头/标注审计时，只能原样或高清化；不得仅凭文字描述自由编造机构图或流程图，再把示意图说成“忠实重绘”。详细检查表见 [重绘准入与交付闸门](references/redraw-gates.md)。
 
-`scripts/image_pipeline.py` 提供原样复制、Pillow 传统增强、已知 SMILES/Molfile 的 RDKit 绘图。`scripts/canvas.py` 新增隔离安装、自检、MathJax 公式渲染、Graphviz WASM 流程图布局及 SVG→PNG；另有 MolScribe、DECIMER、pix2tex 可选识别适配器，未捆绑模型权重，真实推理需另验，DeTikZify 未接入。不绑定 OpenAI，低清图片无法辨认的内容不会自动猜补。具体命令与依赖见 [可执行工具链](references/toolchain.md)，审查流程见 [重绘流程](references/redraw.md) 和 [流程图流程](references/flowcharts.md)。
+`scripts/image_pipeline.py` 提供原样复制、Pillow 传统增强、已知 SMILES/Molfile 的 RDKit 绘图。`scripts/canvas.py` 新增隔离安装、自检、MathJax 公式渲染、表达式函数图 SVG/PNG、Graphviz WASM 流程图布局及 SVG→PNG；另有 MolScribe、DECIMER、pix2tex 可选识别适配器，未捆绑模型权重，真实推理需另验，DeTikZify 未接入。不绑定 OpenAI，低清图片无法辨认的内容不会自动猜补。具体命令与依赖见 [可执行工具链](references/toolchain.md)，审查流程见 [重绘流程](references/redraw.md) 和 [流程图流程](references/flowcharts.md)。
 
 **化学结构硬门槛：** 画有机结构/反应式前必须运行 `python scripts/canvas.py doctor --require rdkit`；非 0 就直接停止并安装/激活隔离运行时，不得用系统 Python、手写 SVG 或只靠 OCR 文本拼结构。图片转结构还需要真实可运行的 MolScribe/DECIMER 模型；没有就要求用户提供 SMILES/Molfile，或退回原样/高清化。
 
-**只允许稳定 CLI：** 表格、图片、公式、流程图都走 `canvas.py` / `image_pipeline.py` / `render_table.cjs` 的已列命令，不临时写 `figgen.py`、手拼 SVG/HTML 或自由画机构图。入口和退出码见 [CLI 契约](references/cli-contract.md)。
+**只允许稳定 CLI：** 表格、图片、公式、函数图、流程图都走 `canvas.py` / `image_pipeline.py` / `render_table.cjs` 的已列命令，不临时写 `figgen.py`、手拼 SVG/HTML 或自由画机构图。入口和退出码见 [CLI 契约](references/cli-contract.md)。
+
+## 函数图（表达式）
+
+用户明确给出函数表达式时，用内置采样器直接出 SVG/PNG，不启动浏览器或 GeoGebra：
+
+```json
+{
+  "expression": "sin(x^2)cos(3x)+2sin(5x)/(1+x^2)+x/4",
+  "xrange": [-6, 6],
+  "yrange": [-5, 5],
+  "width": 1600,
+  "height": 900,
+  "samples": 4000,
+  "color": "#36B59D",
+  "axis_color": "#000000",
+  "x_labels": [{"value": -3.14159, "text": "−π"}, {"value": 3.14159, "text": "π"}],
+  "y_labels": [{"value": -1, "text": "-1"}, {"value": 1, "text": "1"}]
+}
+```
+
+```text
+python scripts/canvas.py mathplot --input function.json --output plot.png
+```
+
+只画 `x_labels` / `y_labels` 中指定的坐标文字，不自动添加其他刻度数字；函数值超出 `yrange` 时断段，不画渐近线。默认白底，可用 `"background": "transparent"`。支持 `sec`、`csc`、`cot`。
 
 ## 六种样式
 

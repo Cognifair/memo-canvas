@@ -27,6 +27,37 @@ python scripts/canvas.py formula --input formula.tex --output formula.png --font
 
 使用 MathJax 的 base/ams 数学包，字体轮廓内嵌为 SVG 路径，不依赖 TeX 安装。无浏览器、无外链字体；未知宏报错，不交付错误提示图片。这里不执行扫描识别。
 
+## 函数图：表达式 → SVG/PNG
+
+用于**用户明确给出函数表达式**的静态图，不用于扫描图复刻。解析器只接受白名单函数和 `x`，不接受任意 Python 代码；不需要浏览器、GeoGebra 或网络。
+
+```json
+{
+  "expression": "sin(x^2)cos(3x)+2sin(5x)/(1+x^2)+x/4",
+  "xrange": [-6, 6],
+  "yrange": [-5, 5],
+  "width": 1600,
+  "height": 900,
+  "samples": 4000,
+  "color": "#36B59D",
+  "axis_color": "#000000",
+  "background": "#FFFFFF",
+  "x_labels": [{"value": -3.14159, "text": "−π"}, {"value": 3.14159, "text": "π"}],
+  "y_labels": [{"value": -1, "text": "-1"}, {"value": 1, "text": "1"}]
+}
+```
+
+```text
+python scripts/canvas.py mathplot --input function.json --output plot.png
+python scripts/canvas.py mathplot --input function.json --output plot.svg
+```
+
+- `x_labels` / `y_labels` 只画列出的标签，不自动加其他坐标数字；
+- `samples` 默认 4000，范围 16–200000；
+- 函数值超出 `yrange` 或非有限时断段；默认不画渐近线；
+- PNG 使用 sharp，按配置宽高输出，不再默认 2 倍；拒绝覆盖已有文件；
+- 这是静态图入口，不提供拖动、交点、切线或 CAS；需要这些能力时先说明，不能把它冒充交互工具。
+
 ## 流程图：清单 → 自动布局
 
 从源图提取并核对以下 JSON；这是合成调用示例，不是用户源图的识别结果：
