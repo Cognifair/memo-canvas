@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.1.8
+# 墨兰迪 Memo-Canvas v2.2.0
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -48,6 +48,17 @@ python scripts/canvas.py mathplot --input function.json --output plot.png
 只画 `x_labels` / `y_labels` 中指定的坐标文字，不自动添加其他刻度数字；函数值超出 `yrange` 时断段，不画渐近线。默认透明底；支持 `sec`、`csc`、`cot`。
 
 配色默认规则：**关键内容（曲线、标题）用少量 `#36B59D`，坐标轴和普通标签用 `#8E8E8E`，默认透明底**；用户没有另说时按这个规则，不把整图铺成绿色。
+
+标注不指定时，先生成候选再用询问框让用户选：
+
+```text
+极简（推荐）：只标定义域/值域边界
+关键点：再加零点/截距/极值
+完整：再加必要渐近线和范围说明
+不标注：只保留坐标轴
+```
+
+没有有效候选就保持空标注，不为了填满画面加数字。完整取舍见 [函数图标注方案](references/annotation-options.md)。
 
 教材式坐标轴可选字段：
 

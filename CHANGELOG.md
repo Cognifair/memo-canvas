@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.2.0 — 2026-11-17
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/annotation-options.md)
+
+### 新增
+
+- 函数图标注方案：AI 先分析定义域/值域边界、零点、截距、极值，只保留有信息价值的候选。
+- 未指定标注时，用询问框提供「极简 / 关键点 / 完整 / 不标注」，推荐极简；没有有效候选则保持空标注。
+- 明确选极简后不得偷偷补点，未选渐近线不画虚线。
+
 ## v2.1.8 — 2026-11-15
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/visual-defaults.md)
