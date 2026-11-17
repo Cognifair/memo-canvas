@@ -111,6 +111,44 @@ class MathplotTests(unittest.TestCase):
             self.assertGreaterEqual(svg.count("<path"), 1)
             self.assertGreaterEqual(svg.count("<line"), 4)
 
+    def test_origin_o_default(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            temp = Path(tmp)
+            config = temp / "origin.json"
+            config.write_text(json.dumps({"expression": "x", "xrange": [-2, 2], "yrange": [-2, 2]}),
+                              encoding="utf-8")
+            output = temp / "origin.svg"
+            subprocess.run([sys.executable, "-B", str(ROOT / "scripts" / "canvas.py"),
+                            "mathplot", "--input", str(config), "--output", str(output)],
+                           check=True, capture_output=True, text=True)
+            svg = output.read_text(encoding="utf-8")
+            self.assertIn(">O</text>", svg)
+            self.assertIn('<circle cx="', svg)
+            self.assertIn('fill="#8E8E8E"', svg)
+
+    def test_overlay_primitives(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            temp = Path(tmp)
+            config = temp / "overlay.json"
+            config.write_text(json.dumps({
+                "expression": "x",
+                "xrange": [-2, 2],
+                "yrange": [-2, 2],
+                "overlay": [
+                    {"type": "circle", "x": 1, "y": 1, "r": 6, "color": "#8E8E8E"},
+                    {"type": "text", "x": 1, "y": 1, "text": "P", "dx": 8, "dy": -8},
+                    {"type": "line", "x1": -2, "y1": 1, "x2": 2, "y2": 1, "dashed": True},
+                ],
+            }), encoding="utf-8")
+            output = temp / "overlay.svg"
+            subprocess.run([sys.executable, "-B", str(ROOT / "scripts" / "canvas.py"),
+                            "mathplot", "--input", str(config), "--output", str(output)],
+                           check=True, capture_output=True, text=True)
+            svg = output.read_text(encoding="utf-8")
+            self.assertIn(">P</text>", svg)
+            self.assertIn('stroke-dasharray="8 6"', svg)
+            self.assertIn("<circle", svg)
+
     def test_asymptotes_are_dashed(self):
         with tempfile.TemporaryDirectory() as tmp:
             temp = Path(tmp)

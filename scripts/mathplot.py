@@ -262,7 +262,8 @@ def load_config(path: Path):
         "font_size", "margin", "x_labels", "y_labels",
         "axis_arrows", "arrow_size", "axis_names", "show_ticks",
         "title", "title_color", "title_dx", "title_dy", "y_label_side",
-        "asymptotes",
+        "asymptotes", "show_origin", "origin_radius", "origin_color", "origin_label",
+        "overlay",
     }
     unknown = sorted(set(data) - allowed)
     if unknown:
@@ -388,6 +389,74 @@ def load_config(path: Path):
             "dy": float(dy),
         })
 
+    show_origin = data.get("show_origin", True)
+    if not isinstance(show_origin, bool):
+        raise ValueError("show_origin must be boolean")
+    origin_radius = data.get("origin_radius", 4)
+    if not isinstance(origin_radius, (int, float)) or not 0.5 <= float(origin_radius) <= 40:
+        raise ValueError("origin_radius must be 0.5..40")
+    origin_color = data.get("origin_color", axis_color)
+    if not isinstance(origin_color, str) or not HEX_RE.fullmatch(origin_color):
+        raise ValueError("origin_color must be a six-digit hex color")
+    origin_label = data.get("origin_label", "O")
+    if not isinstance(origin_label, str):
+        raise ValueError("origin_label must be a string")
+
+    raw_overlay = data.get("overlay", [])
+    if not isinstance(raw_overlay, list) or len(raw_overlay) > 100:
+        raise ValueError("overlay must be an array of at most 100 items")
+    normalized_overlay = []
+    for index, item in enumerate(raw_overlay):
+        if not isinstance(item, dict):
+            raise ValueError(f"overlay[{index}] must be an object")
+        kind = item.get("type")
+        overlay_color = item.get("color", axis_color)
+        if not isinstance(overlay_color, str) or not HEX_RE.fullmatch(overlay_color):
+            raise ValueError(f"overlay[{index}].color must be a six-digit hex color")
+        if kind == "circle":
+            x, y, radius = item.get("x"), item.get("y"), item.get("r")
+            if not all(isinstance(v, (int, float)) and math.isfinite(float(v)) for v in (x, y, radius)):
+                raise ValueError(f"overlay[{index}] circle needs finite x/y/r")
+            if not 0.5 <= float(radius) <= 40:
+                raise ValueError(f"overlay[{index}].r must be 0.5..40")
+            normalized_overlay.append({"type": "circle", "x": float(x), "y": float(y),
+                                       "r": float(radius), "color": overlay_color})
+        elif kind == "text":
+            x, y = item.get("x"), item.get("y")
+            text = item.get("text")
+            if not all(isinstance(v, (int, float)) and math.isfinite(float(v)) for v in (x, y)):
+                raise ValueError(f"overlay[{index}] text needs finite x/y")
+            if not isinstance(text, str) or not text or len(text) > 200:
+                raise ValueError(f"overlay[{index}].text must be 1..200 characters")
+            dx, dy = item.get("dx", 0), item.get("dy", 0)
+            if not isinstance(dx, (int, float)) or not isinstance(dy, (int, float)):
+                raise ValueError(f"overlay[{index}].dx/dy must be numbers")
+            size = item.get("size", font_size)
+            if not isinstance(size, int) or not 8 <= size <= 200:
+                raise ValueError(f"overlay[{index}].size must be 8..200")
+            anchor = item.get("anchor", "start")
+            if anchor not in {"start", "middle", "end"}:
+                raise ValueError(f"overlay[{index}].anchor must be start/middle/end")
+            normalized_overlay.append({"type": "text", "x": float(x), "y": float(y),
+                                       "text": text, "dx": float(dx), "dy": float(dy),
+                                       "size": size, "anchor": anchor, "color": overlay_color})
+        elif kind == "line":
+            values = [item.get(key) for key in ("x1", "y1", "x2", "y2")]
+            if not all(isinstance(v, (int, float)) and math.isfinite(float(v)) for v in values):
+                raise ValueError(f"overlay[{index}] line needs finite x1/y1/x2/y2")
+            overlay_width = item.get("width", axis_width)
+            if not isinstance(overlay_width, (int, float)) or not 0.5 <= float(overlay_width) <= 40:
+                raise ValueError(f"overlay[{index}].width must be 0.5..40")
+            dashed = item.get("dashed", False)
+            if not isinstance(dashed, bool):
+                raise ValueError(f"overlay[{index}].dashed must be boolean")
+            normalized_overlay.append({"type": "line", "x1": float(values[0]), "y1": float(values[1]),
+                                       "x2": float(values[2]), "y2": float(values[3]),
+                                       "width": float(overlay_width), "dashed": dashed, "color": overlay_color})
+        else:
+            raise ValueError(f"overlay[{index}].type must be circle, text or line")
+
+
     x_labels = data.get("x_labels", [])
     y_labels = data.get("y_labels", [])
     if not isinstance(x_labels, list) or not isinstance(y_labels, list):
@@ -419,6 +488,11 @@ def load_config(path: Path):
         "title_dy": float(title_dy),
         "y_label_side": y_label_side,
         "asymptotes": normalized_asymptotes,
+        "show_origin": show_origin,
+        "origin_radius": float(origin_radius),
+        "origin_color": origin_color,
+        "origin_label": origin_label,
+        "overlay": normalized_overlay,
     }
 
 
@@ -578,8 +652,88 @@ def svg_document(config, segments):
                 )
 
     labels = []
+    origin_shapes = []
+    origin_labels = []
+    if config["show_origin"] and has_x_axis and has_y_axis:
+        origin_shapes.append(
+            f'<circle cx="{axis_x:.2f}" cy="{axis_y:.2f}" r="{config["origin_radius"]}" '
+            f'fill="{html.escape(config["origin_color"])}"/>'
+        )
+        if config["origin_label"]:
+            fs = config["font_size"]
+            curve_points = [(px(x), py(y)) for segment in segments for x, y in segment]
+
+            def text_box(cx, cy, anchor):
+                width = fs * 0.62 * max(1, len(config["origin_label"]))
+                height = fs * 0.9
+                if anchor == "start":
+                    x0, x1 = cx, cx + width
+                elif anchor == "end":
+                    x0, x1 = cx - width, cx
+                else:
+                    x0, x1 = cx - width / 2, cx + width / 2
+                return x0, cy - height * 0.8, x1, cy + height * 0.2
+
+            def clear_of_curve(box):
+                x0, y0, x1, y1 = box
+                for cx, cy in curve_points:
+                    if x0 - 3 <= cx <= x1 + 3 and y0 - 3 <= cy <= y1 + 3:
+                        return False
+                return True
+
+            candidates = []
+            for scale in (1.0, 1.55, 2.2):
+                candidates.extend([
+                    (axis_x + fs * 0.5 * scale, axis_y + fs * 1.35 * scale, "start"),
+                    (axis_x - fs * 0.5 * scale, axis_y + fs * 1.35 * scale, "end"),
+                    (axis_x + fs * 0.5 * scale, axis_y - fs * 0.35 * scale, "start"),
+                    (axis_x - fs * 0.5 * scale, axis_y - fs * 0.35 * scale, "end"),
+                ])
+            chosen = None
+            for cx, cy, anchor in candidates:
+                box = text_box(cx, cy, anchor)
+                if clear_of_curve(box):
+                    chosen = (cx, cy, anchor)
+                    break
+            if chosen is None:
+                chosen = (axis_x + fs * 0.5, axis_y + fs * 1.35, "start")
+            cx, cy, anchor = chosen
+            origin_labels.append(
+                f'<text x="{cx:.2f}" y="{cy:.2f}" '
+                f'text-anchor="{anchor}" fill="{html.escape(config["origin_color"])}" '
+                f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
+                f'font-size="{fs}">{html.escape(config["origin_label"])}</text>'
+            )
+
+    overlay_shapes = []
+    overlay_labels = []
+    for item in config["overlay"]:
+        if item["type"] == "circle":
+            overlay_shapes.append(
+                f'<circle cx="{px(item["x"]):.2f}" cy="{py(item["y"]):.2f}" '
+                f'r="{item["r"]}" fill="{html.escape(item["color"])}"/>'
+            )
+        elif item["type"] == "text":
+            overlay_labels.append(
+                f'<text x="{px(item["x"]) + item["dx"]:.2f}" '
+                f'y="{py(item["y"]) + item["dy"]:.2f}" '
+                f'text-anchor="{item["anchor"]}" fill="{html.escape(item["color"])}" '
+                f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
+                f'font-size="{item["size"]}">{html.escape(item["text"])}</text>'
+            )
+        elif item["type"] == "line":
+            dash = ' stroke-dasharray="8 6"' if item["dashed"] else ""
+            overlay_shapes.append(
+                f'<line x1="{px(item["x1"]):.2f}" y1="{py(item["y1"]):.2f}" '
+                f'x2="{px(item["x2"]):.2f}" y2="{py(item["y2"]):.2f}" '
+                f'stroke="{html.escape(item["color"])}" stroke-width="{item["width"]}"{dash}/>'
+            )
+
     for item in config["x_labels"]:
         if not (xmin <= item["value"] <= xmax):
+            continue
+        if (config["show_origin"] and has_x_axis and has_y_axis
+                and abs(item["value"]) < 1e-12 and item["text"].strip() == "0"):
             continue
         x = px(item["value"])
         y = (axis_y if has_x_axis else height - margin) + config["font_size"] * 1.3
@@ -594,6 +748,9 @@ def svg_document(config, segments):
     y_label_offset = -config["font_size"] * 0.4 if config["y_label_side"] == "left" else config["font_size"] * 0.7
     for item in config["y_labels"]:
         if not (ymin <= item["value"] <= ymax):
+            continue
+        if (config["show_origin"] and has_x_axis and has_y_axis
+                and abs(item["value"]) < 1e-12 and item["text"].strip() == "0"):
             continue
         labels.append(
             f'<text x="{label_axis_x + y_label_offset + item["dx"]:.2f}" '
@@ -615,7 +772,7 @@ def svg_document(config, segments):
     if has_x_axis and config["axis_names"].get("x"):
         names.append(
             f'<text x="{width - margin - config["font_size"] * 0.3:.2f}" '
-            f'y="{axis_y - config["font_size"] * 0.7:.2f}" '
+            f'y="{axis_y + config["font_size"] * 1.3:.2f}" '
             f'text-anchor="end" fill="{axis_color}" '
             f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
             f'font-size="{config["font_size"]}">{html.escape(config["axis_names"]["x"])}</text>'
@@ -635,10 +792,12 @@ def svg_document(config, segments):
         f'stroke-linejoin="round"/>'
         for path in paths
     )
-    label_markup = "\n".join(labels + names + asymptote_labels)
+    label_markup = "\n".join(labels + names + asymptote_labels + origin_labels + overlay_labels)
     tick_markup = "\n".join(ticks)
     axis_markup = "\n".join(axes)
     asymptote_markup = "\n".join(asymptotes)
+    origin_markup = "\n".join(origin_shapes)
+    overlay_markup = "\n".join(overlay_shapes)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
 <defs><clipPath id="mathplot-clip"><rect x="{margin}" y="{margin}" width="{plot_w}" height="{plot_h}"/></clipPath></defs>
 {background}
@@ -647,6 +806,8 @@ def svg_document(config, segments):
 {path_markup}
 {axis_markup}
 {tick_markup}
+{origin_markup}
+{overlay_markup}
 </g>
 {label_markup}
 </svg>
@@ -673,6 +834,7 @@ def run_mathplot(args):
         'yrange': list(config['yrange']),
         'samples': config['samples'],
         'segments': len(segments),
+        'overlay_used': bool(config['overlay']),
         'source_verified': False,
         'visual_audit': 'not_checked',
         'note': 'Deterministic sampled SVG plot; verify labels and clipping for the target card.',

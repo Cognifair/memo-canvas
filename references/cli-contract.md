@@ -75,6 +75,36 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
 ```
 
 `orientation` 支持 `horizontal` / `vertical`；未指定时不画渐近线。该入口不会自动推断所有渐近线，AI 判断后显式写入。
+
+原点默认：
+
+```json
+{
+  "show_origin": true,
+  "origin_radius": 4,
+  "origin_color": "#8E8E8E",
+  "origin_label": "O"
+}
+```
+
+- 原点在视域内时默认画灰色实心点并标 `O`；O 标签放原点右下方并避开曲线/轴线；
+- 原点不在视域内不画；
+- `x` 轴名在轴下方右侧；
+- 若 `x_labels` / `y_labels` 里同时有 `0`，O 优先，0 标签自动跳过。
+
+CLI 兜底覆盖层（默认关闭）：
+
+```json
+{
+  "overlay": [
+    {"type": "circle", "x": 0, "y": 0, "r": 5, "color": "#8E8E8E"},
+    {"type": "text", "x": 0, "y": 0, "text": "O", "dx": -10, "dy": 18},
+    {"type": "line", "x1": -2, "y1": 1, "x2": 2, "y2": 1, "dashed": true}
+  ]
+}
+```
+
+只支持 `circle` / `text` / `line`，坐标是数学坐标；用于 schema 表达不了的小补充，不是任意 SVG。输出会记录 `overlay_used`；仍不够时再走受审 SVG 兜底。
 - `title` 默认放在右上角，`title_dx` / `title_dy` 是像素偏移；标题颜色独立于曲线颜色。
 
 ## 工具必须先加载

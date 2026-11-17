@@ -59,6 +59,8 @@ python scripts/canvas.py mathplot --input function.json --output plot.svg
 - 默认透明底，坐标轴和普通标签用 `#8E8E8E`，关键内容（曲线/标题）用少量 `#36B59D`；便于在明暗背景上复用；
 - 可选 `axis_arrows`、`arrow_size`、`show_ticks`、`axis_names`、`title`/`title_color` 复刻带箭头、刻度、轴名和标题的教材式样式；刻度只出现在手动列出的标签位置；
 - `asymptotes` 可画水平/垂直灰色虚线并加文字标注；未指定时不画，不自动推断；
+- 原点在视域内默认画灰色实心点 + `O`；不在视域不画；
+- `overlay` 可补少量圆点/文字/线段（数学坐标，默认关闭）；输出记录 `overlay_used`，不够时才走受审 SVG；
 - 这是静态图入口，不提供拖动、交点、切线或 CAS；需要这些能力时先说明，不能把它冒充交互工具。
 
 ## 流程图：清单 → 自动布局

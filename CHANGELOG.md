@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.4.0 — 2026-11-17
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/annotation-options.md, references/cli-contract.md, references/toolchain.md, references/visual-defaults.md, scripts/mathplot.py, scripts/test_mathplot.py)
+
+### 新增
+
+- 坐标图默认在原点画灰色实心点并标 `O`；原点不在视域内不画，`0` 标签与 O 冲突时优先保留 O。
+- `mathplot.overlay` CLI 兜底：支持 `circle` / `text` / `line` 三种图元，使用数学坐标，默认关闭，输出记录 `overlay_used`。
+- 兜底顺序明确为：标准 schema → overlay → 受审 SVG，不静默绕过 CLI。
+
 ## v2.3.0 — 2026-11-17
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/annotation-options.md, references/cli-contract.md, references/toolchain.md, scripts/mathplot.py, scripts/test_mathplot.py)

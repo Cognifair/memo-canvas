@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.3.0
+# 墨兰迪 Memo-Canvas v2.4.0
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -72,6 +72,8 @@ python scripts/canvas.py mathplot --input function.json --output plot.png
 ```
 
 不指定就不画；工具不会自动推断所有渐近线，由 AI 判断后显式写入。
+
+坐标图默认在原点画灰色实心点并标 `O`（原点不在视域时不画）；`O` 标签在原点右下方并避开曲线/轴，`x` 轴名在轴下方右侧。schema 不够用时可用 `overlay` 补少量圆点/文字/线段，坐标仍是数学坐标；输出记录 `overlay_used`，不静默改成任意 SVG。
 
 教材式坐标轴可选字段：
 
