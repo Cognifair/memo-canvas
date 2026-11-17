@@ -63,6 +63,18 @@ python -B scripts/canvas.py mathplot --input function.json --output plot.svg
 - `show_ticks` 只在 `x_labels` / `y_labels` 指定的位置画短刻度，不生成其他数字；
 - `axis_names` 只允许 `x` / `y` 两个键；
 - `y_label_side` 为 `left` 或 `right`，默认 `right`；
+- `asymptotes` 用于手动指定虚线渐近线；默认灰色 `#8E8E8E` 虚线，`text` 可选：
+
+```json
+{
+  "asymptotes": [
+    {"orientation": "horizontal", "value": 1, "text": "y = 1"},
+    {"orientation": "horizontal", "value": -1, "text": "y = -1"}
+  ]
+}
+```
+
+`orientation` 支持 `horizontal` / `vertical`；未指定时不画渐近线。该入口不会自动推断所有渐近线，AI 判断后显式写入。
 - `title` 默认放在右上角，`title_dx` / `title_dy` 是像素偏移；标题颜色独立于曲线颜色。
 
 ## 工具必须先加载

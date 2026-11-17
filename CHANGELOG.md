@@ -2,6 +2,16 @@
 
 遵循语义化版本：修 bug → patch，新增能力 → minor，改变契约 → major。
 
+## v2.3.0 — 2026-11-17
+
+影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/annotation-options.md, references/cli-contract.md, references/toolchain.md, scripts/mathplot.py, scripts/test_mathplot.py)
+
+### 新增
+
+- `mathplot.asymptotes`：支持水平/垂直渐近线，默认灰色 `#8E8E8E` 虚线，可附文字标注（如 `y = 1`、`y = -1`）。
+- 未指定时不画渐近线，不自动推断；由 AI 判断并写入配置。
+- 标注方案中的“完整”选项现在可以真正绘制渐近线，不再只写说明文字。
+
 ## v2.2.0 — 2026-11-17
 
 影响面：memo-canvas(SKILL.md, README.md, CHANGELOG.md, version.json, agents/openai.yaml, references/annotation-options.md)

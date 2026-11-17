@@ -262,6 +262,7 @@ def load_config(path: Path):
         "font_size", "margin", "x_labels", "y_labels",
         "axis_arrows", "arrow_size", "axis_names", "show_ticks",
         "title", "title_color", "title_dx", "title_dy", "y_label_side",
+        "asymptotes",
     }
     unknown = sorted(set(data) - allowed)
     if unknown:
@@ -347,6 +348,46 @@ def load_config(path: Path):
     if y_label_side not in {"left", "right"}:
         raise ValueError("y_label_side must be 'left' or 'right'")
 
+    asymptotes = data.get("asymptotes", [])
+    if not isinstance(asymptotes, list):
+        raise ValueError("asymptotes must be an array")
+    normalized_asymptotes = []
+    for index, item in enumerate(asymptotes):
+        if not isinstance(item, dict):
+            raise ValueError(f"asymptotes[{index}] must be an object")
+        orientation = item.get("orientation")
+        if orientation not in {"horizontal", "vertical"}:
+            raise ValueError(f"asymptotes[{index}].orientation must be horizontal or vertical")
+        value = item.get("value")
+        if not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+            raise ValueError(f"asymptotes[{index}].value must be a finite number")
+        text = item.get("text", "")
+        if not isinstance(text, str):
+            raise ValueError(f"asymptotes[{index}].text must be a string")
+        asym_color = item.get("color", axis_color)
+        if not isinstance(asym_color, str) or not HEX_RE.fullmatch(asym_color):
+            raise ValueError(f"asymptotes[{index}].color must be a six-digit hex color")
+        asym_width = item.get("width", axis_width)
+        if not isinstance(asym_width, (int, float)) or not 0.5 <= float(asym_width) <= 40:
+            raise ValueError(f"asymptotes[{index}].width must be 0.5..40")
+        dash = item.get("dash", True)
+        if not isinstance(dash, bool):
+            raise ValueError(f"asymptotes[{index}].dash must be boolean")
+        dx = item.get("dx", 0)
+        dy = item.get("dy", 0)
+        if not isinstance(dx, (int, float)) or not isinstance(dy, (int, float)):
+            raise ValueError(f"asymptotes[{index}].dx/dy must be numbers")
+        normalized_asymptotes.append({
+            "orientation": orientation,
+            "value": float(value),
+            "text": text,
+            "color": asym_color,
+            "width": float(asym_width),
+            "dash": dash,
+            "dx": float(dx),
+            "dy": float(dy),
+        })
+
     x_labels = data.get("x_labels", [])
     y_labels = data.get("y_labels", [])
     if not isinstance(x_labels, list) or not isinstance(y_labels, list):
@@ -377,6 +418,7 @@ def load_config(path: Path):
         "title_dx": float(title_dx),
         "title_dy": float(title_dy),
         "y_label_side": y_label_side,
+        "asymptotes": normalized_asymptotes,
     }
 
 
@@ -502,6 +544,39 @@ def svg_document(config, segments):
                     f'stroke="{axis_color}" stroke-width="{config["axis_width"]}"/>'
                 )
 
+    asymptotes = []
+    asymptote_labels = []
+    for item in config["asymptotes"]:
+        dash = ' stroke-dasharray="8 6"' if item["dash"] else ""
+        if item["orientation"] == "horizontal" and ymin <= item["value"] <= ymax:
+            y = py(item["value"])
+            asymptotes.append(
+                f'<line x1="{margin}" y1="{y:.2f}" x2="{width - margin}" y2="{y:.2f}" '
+                f'stroke="{html.escape(item["color"])}" stroke-width="{item["width"]}"{dash}/>'
+            )
+            if item["text"]:
+                asymptote_labels.append(
+                    f'<text x="{width - margin - 8 + item["dx"]:.2f}" '
+                    f'y="{y - config["font_size"] * 0.25 + item["dy"]:.2f}" '
+                    f'text-anchor="end" fill="{html.escape(item["color"])}" '
+                    f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
+                    f'font-size="{config["font_size"]}">{html.escape(item["text"])}</text>'
+                )
+        elif item["orientation"] == "vertical" and xmin <= item["value"] <= xmax:
+            x = px(item["value"])
+            asymptotes.append(
+                f'<line x1="{x:.2f}" y1="{margin}" x2="{x:.2f}" y2="{height - margin}" '
+                f'stroke="{html.escape(item["color"])}" stroke-width="{item["width"]}"{dash}/>'
+            )
+            if item["text"]:
+                asymptote_labels.append(
+                    f'<text x="{x + config["font_size"] * 0.4 + item["dx"]:.2f}" '
+                    f'y="{margin + config["font_size"] * 0.9 + item["dy"]:.2f}" '
+                    f'text-anchor="start" fill="{html.escape(item["color"])}" '
+                    f'font-family="Segoe UI, Microsoft YaHei, sans-serif" '
+                    f'font-size="{config["font_size"]}">{html.escape(item["text"])}</text>'
+                )
+
     labels = []
     for item in config["x_labels"]:
         if not (xmin <= item["value"] <= xmax):
@@ -560,13 +635,15 @@ def svg_document(config, segments):
         f'stroke-linejoin="round"/>'
         for path in paths
     )
-    label_markup = "\n".join(labels + names)
+    label_markup = "\n".join(labels + names + asymptote_labels)
     tick_markup = "\n".join(ticks)
     axis_markup = "\n".join(axes)
+    asymptote_markup = "\n".join(asymptotes)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
 <defs><clipPath id="mathplot-clip"><rect x="{margin}" y="{margin}" width="{plot_w}" height="{plot_h}"/></clipPath></defs>
 {background}
 <g clip-path="url(#mathplot-clip)">
+{asymptote_markup}
 {path_markup}
 {axis_markup}
 {tick_markup}

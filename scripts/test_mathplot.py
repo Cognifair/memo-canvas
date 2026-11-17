@@ -111,6 +111,32 @@ class MathplotTests(unittest.TestCase):
             self.assertGreaterEqual(svg.count("<path"), 1)
             self.assertGreaterEqual(svg.count("<line"), 4)
 
+    def test_asymptotes_are_dashed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            temp = Path(tmp)
+            config = temp / "asym.json"
+            config.write_text(json.dumps({
+                "expression": "tanh(x)",
+                "xrange": [-6, 6],
+                "yrange": [-2, 2],
+                "width": 900,
+                "height": 700,
+                "samples": 500,
+                "asymptotes": [
+                    {"orientation": "horizontal", "value": 1, "text": "y = 1"},
+                    {"orientation": "horizontal", "value": -1, "text": "y = -1"},
+                ],
+            }), encoding="utf-8")
+            output = temp / "asym.svg"
+            subprocess.run([sys.executable, "-B", str(ROOT / "scripts" / "canvas.py"),
+                            "mathplot", "--input", str(config), "--output", str(output)],
+                           check=True, capture_output=True, text=True)
+            svg = output.read_text(encoding="utf-8")
+            self.assertIn('stroke-dasharray="8 6"', svg)
+            self.assertIn("y = 1", svg)
+            self.assertIn("y = -1", svg)
+            self.assertIn('stroke="#8E8E8E"', svg)
+
     def test_refuses_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
             temp = Path(tmp)

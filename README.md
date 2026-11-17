@@ -1,4 +1,4 @@
-# 墨兰迪 Memo-Canvas v2.2.0
+# 墨兰迪 Memo-Canvas v2.3.0
 
 > 🌐 [墨卡大师 · 专业制卡工作流](https://moka-master.app.workbuddy.host/?sharecode=ZYHGDS4GEB)
 
@@ -59,6 +59,19 @@ python scripts/canvas.py mathplot --input function.json --output plot.png
 ```
 
 没有有效候选就保持空标注，不为了填满画面加数字。完整取舍见 [函数图标注方案](references/annotation-options.md)。
+
+渐近线可显式加灰色虚线：
+
+```json
+{
+  "asymptotes": [
+    {"orientation": "horizontal", "value": 1, "text": "y = 1"},
+    {"orientation": "horizontal", "value": -1, "text": "y = -1"}
+  ]
+}
+```
+
+不指定就不画；工具不会自动推断所有渐近线，由 AI 判断后显式写入。
 
 教材式坐标轴可选字段：
 
